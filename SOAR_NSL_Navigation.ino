@@ -6,6 +6,7 @@
 #include <Adafruit_L3GD20_U.h>
 #include <Adafruit_10DOF.h>
 #include <Adafruit_GPS.h>
+#include <Servo.h>
 #include <SoftwareSerial.h>
 #define GPSECHO  false
 
@@ -14,6 +15,14 @@ Adafruit_10DOF                dof   = Adafruit_10DOF();
 Adafruit_LSM303_Mag_Unified   mag   = Adafruit_LSM303_Mag_Unified(30302);
 Adafruit_BMP085_Unified       bmp   = Adafruit_BMP085_Unified(18001);
 Adafruit_L3GD20_Unified       gyro  = Adafruit_L3GD20_Unified(20);
+
+int leftMotorPin = 6;
+int rightMotorPin = 7;
+Servo leftMotor;
+Servo rightMotor;
+
+boolean rightMotorOn = false;
+boolean leftMotorOn = false;
 
 SoftwareSerial mySerial(3, 2);
 Adafruit_GPS GPS(&mySerial);
