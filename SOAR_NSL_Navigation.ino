@@ -131,9 +131,18 @@ void initGPS() {
   mySerial.println(PMTK_Q_RELEASE);  
 }
 
+void initMotors() {
+  leftMotor.attach(leftMotorPin);
+  rightMotor.attach(rightMotorPin);
+  leftMotor.writeMicroseconds(1100);
+  rightMotor.writeMicroseconds(1100);
+  delay(10000);  
+}
+
 void setup()  {
   Serial.begin(115200);
   initDofBoard();
+  initMotors();
   startTime = millis();
   timer = millis();
   nullLatLon.north = 0;
