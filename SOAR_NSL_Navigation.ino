@@ -109,6 +109,34 @@ latLon getCurrentLatLon() {
   }  
 }
 
+void turnLeftOn() {
+  if (!leftMotorOn) {
+    leftMotor.writeMicroseconds(1250);
+    leftMotorOn = true;
+  }
+}
+
+void turnLeftOff() {
+  if (leftMotorOn) {
+    leftMotor.writeMicroseconds(1245);
+    leftMotorOn = false;
+  }
+}
+
+void turnRightOn() {
+  if (!rightMotorOn){
+    rightMotor.writeMicroseconds(1250);
+    rightMotorOn = true;
+  }
+}
+
+void turnRightOff() {
+  if (rightMotorOn) {
+    rightMotor.writeMicroseconds(1245);
+    rightMotorOn = false;
+  }
+}
+
 void initDofBoard() {
   Serial.println("INIT");
   
