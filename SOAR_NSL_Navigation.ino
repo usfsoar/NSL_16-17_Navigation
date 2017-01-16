@@ -175,18 +175,27 @@ void setup()  {
   timer = millis();
   nullLatLon.north = 0;
   nullLatLon.west = 0;
+  int timer = millis();
 }
 
 void loop(){
-  latLon currLoc;
-  latLon neededLoc;
-  float neededHeading = 180.0;
+  if (millis() - timer > 30000) { // Shuts motors off after 30 seconds
+    turnRightOff();
+    turnLeftOff();
+    delay(500000000);
+  }
 
-  if ((millis() - startTime) < 60000) {
-    if (getCurrentHeading() - neededHeading > 0) {
+  float neededHeading = 180.0; // Static heading lander goes towards
+
+  if ((millis() - startTime) < 30000) { // Only when < 30 seconds
+    if (getCurrentHeading() > neededHeading) {
       Serial.println("Left");
-    } else {
+      turnLeftOn();
+      turnRightOff();
+    } else {    
       Serial.println("Right");
+      turnRightOn();
+      turnLeftOff();
     }
   }
 }
