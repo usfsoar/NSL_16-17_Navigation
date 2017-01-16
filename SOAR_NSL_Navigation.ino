@@ -110,8 +110,6 @@ latLon getCurrentLatLon() {
 }
 
 void initDofBoard() {
-  pinMode(5, OUTPUT);
-  pinMode(6, OUTPUT);
   Serial.println("INIT");
   
   if(!accel.begin() || !mag.begin() || !bmp.begin() || !gyro.begin()){
