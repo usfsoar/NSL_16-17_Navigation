@@ -42,10 +42,19 @@ class latLon
 
 latLon nullLatLon;
 
-float getNeededHeading(float currHeading, latLon currLoc, latLon neededLoc) {
-  float angle = degrees(atan2((neededLoc.north - currLoc.north), (neededLoc.west - currLoc.west)));
+float getNeededHeading(latLon currLoc, latLon neededLoc) {
+  latLon relativeLoc;
+  relativeLoc.north = neededLoc.north - currLoc.north;
+  relativeLoc.west = neededLoc.west - currLoc.west;
+
+  float angle = atan2(relativeLoc.north, relativeLoc.west);
+  if(angle < 0) {
+    angle += 2*Pi; // atan2() has a domain of [-pi,pi] and we need it on a domain of [0,2pi]
+  }
+  angle = degrees(angle) + 90; // Have to add 90deg because on a compass, north is up, not to the right
+
   Serial.print ("Calculated needed angle: "); Serial.println(angle);
-  return currHeading - angle + 90;
+  return angle;
 }
 
 float getCurrentHeading() {
