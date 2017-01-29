@@ -166,8 +166,8 @@ void initMotors() {
 
 void failSafeTimer(int timeToShutOffMS) {
   if (millis() - timer > timeToShutOffMS) {
-    turnRightOff();
-    turnLeftOff();
+    turnRightMotorOff();
+    turnLeftMotorOff();
     delay(100000);
   }
 }
