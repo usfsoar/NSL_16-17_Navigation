@@ -128,7 +128,7 @@ void turnRightMotorOff() {
 }
 
 void initDofBoard() {
-  Serial.println("INIT");
+  Serial.println("Initializing 10 DOF board");
   
   if(!accel.begin() || !mag.begin() || !bmp.begin() || !gyro.begin()){
     Serial.println("Unable to start 10 DOF board");
@@ -136,9 +136,11 @@ void initDofBoard() {
       delay(1000);  
     }
   }
+  Serial.println("10 DOF board Initialized");
 }
 
 void initGPS() {
+  Serial.println("Initializing GPS");
   GPS.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);  
@@ -146,7 +148,8 @@ void initGPS() {
 
   useInterrupt(true);
   delay(1000);
-  mySerial.println(PMTK_Q_RELEASE);  
+  mySerial.println(PMTK_Q_RELEASE); 
+  Serial.println("GPS Initialized"); 
 }
 
 void initMotors() {
@@ -189,11 +192,10 @@ void setup()  {
   Serial.begin(115200);
   initDofBoard();
   initMotors();
-  startTime = millis();
-  timer = millis();
+  initGPS();
   nullLatLon.north = 0;
   nullLatLon.west = 0;
-  int timer = millis();
+  float timer = millis();
 }
 
 float neededHeading = 90; // Static compass heading lander goes towards
