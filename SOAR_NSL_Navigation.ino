@@ -161,6 +161,14 @@ void initMotors() {
   turnLeftMotorOn(startMotorValue);
 }
 
+void failSafeTimer(int timeToShutOffMS) {
+  if (millis() - timer > timeToShutOffMS) {
+    turnRightOff();
+    turnLeftOff();
+    delay(100000);
+  }
+}
+
 void runMotors(int start, int reductionFactor, int heading){
   int difference = getCurrentHeading() - heading;
   
@@ -191,6 +199,7 @@ void setup()  {
 float neededHeading = 90; // Static compass heading lander goes towards
 
 void loop(){
+  failSafeTimer(30000);
   delay(20);
   runMotors(startMotorValue, 6, neededHeading);
 }
