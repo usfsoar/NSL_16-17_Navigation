@@ -16,6 +16,8 @@ Adafruit_LSM303_Mag_Unified   mag   = Adafruit_LSM303_Mag_Unified(30302);
 Adafruit_BMP085_Unified       bmp   = Adafruit_BMP085_Unified(18001);
 Adafruit_L3GD20_Unified       gyro  = Adafruit_L3GD20_Unified(20);
 
+int startMotorValue = 1250;
+
 int leftMotorPin = 6;
 int rightMotorPin = 7;
 Servo leftMotor;
@@ -118,36 +120,24 @@ latLon getCurrentLatLon() {
   }  
 }
 
-void turnLeftOn() {
-  if (!leftMotorOn) {
-    leftMotor.writeMicroseconds(1250);
-    leftMotorOn = true;
-  }
+void turnLeftMotorOn(int val) {
+  leftMotor.writeMicroseconds(val);
 }
 
-void turnLeftOff() {
-  if (leftMotorOn) {
-    leftMotor.writeMicroseconds(1245);
-    leftMotorOn = false;
-  }
+void turnLeftMotorOff() {
+  leftMotor.writeMicroseconds(1100);
 }
 
-void turnRightOn() {
-  if (!rightMotorOn){
-    rightMotor.writeMicroseconds(1250);
-    rightMotorOn = true;
-  }
+void turnRightMotorOn(int val) {
+  rightMotor.writeMicroseconds(val);
 }
 
-void turnRightOff() {
-  if (rightMotorOn) {
-    rightMotor.writeMicroseconds(1245);
-    rightMotorOn = false;
-  }
+void turnRightMotorOff() {
+  rightMotor.writeMicroseconds(1100);
 }
 
 void initDofBoard() {
-  Serial.println("INIT");
+  Serial.println("Initializing 10 DOF board");
   
   if(!accel.begin() || !mag.begin() || !bmp.begin() || !gyro.begin()){
     Serial.println("Unable to start 10 DOF board");
@@ -155,9 +145,11 @@ void initDofBoard() {
       delay(1000);  
     }
   }
+  Serial.println("10 DOF board Initialized");
 }
 
 void initGPS() {
+  Serial.println("Initializing GPS");
   GPS.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);  
@@ -165,46 +157,60 @@ void initGPS() {
 
   useInterrupt(true);
   delay(1000);
-  mySerial.println(PMTK_Q_RELEASE);  
+  mySerial.println(PMTK_Q_RELEASE); 
+  Serial.println("GPS Initialized"); 
 }
 
 void initMotors() {
+  Serial.println("Initializing Motors");
   leftMotor.attach(leftMotorPin);
   rightMotor.attach(rightMotorPin);
-  leftMotor.writeMicroseconds(1100);
-  rightMotor.writeMicroseconds(1100);
+  turnRightMotorOff();
+  turnLeftMotorOff();
   delay(10000);  
+  Serial.println("Motors Initialized");
+  turnRightMotorOn(startMotorValue);
+  turnLeftMotorOn(startMotorValue);
+}
+
+void failSafeTimer(int timeToShutOffMS) {
+  if (millis() - timer > timeToShutOffMS) {
+    turnRightMotorOff();
+    turnLeftMotorOff();
+    delay(100000);
+  }
+}
+
+void runMotors(int start, int reductionFactor, int heading){
+  int difference = getCurrentHeading() - heading;
+  
+  if (difference < 0) {
+    difference += 360;
+  }
+
+  if (difference <= 180) {
+    turnRightMotorOn(start + (difference / reductionFactor));
+    turnLeftMotorOn(start);
+  } else {
+    turnLeftMotorOn(start + ((360 - difference) / reductionFactor));
+    turnRightMotorOn(start);
+  }  
 }
 
 void setup()  {
   Serial.begin(115200);
   initDofBoard();
   initMotors();
-  startTime = millis();
-  timer = millis();
+  initGPS();
   nullLatLon.north = 0;
   nullLatLon.west = 0;
-  int timer = millis();
+  float timer = millis();
 }
 
+float neededHeading = 90; // Static compass heading lander goes towards
+
 void loop(){
-  if (millis() - timer > 30000) { // Shuts motors off after 30 seconds
-    turnRightOff();
-    turnLeftOff();
-    delay(500000000);
-  }
-
-  float neededHeading = 180.0; // Static heading lander goes towards
-
-  if ((millis() - startTime) < 30000) { // Only when < 30 seconds
-    if (getCurrentHeading() > neededHeading) {
-      Serial.println("Left");
-      turnLeftOn();
-      turnRightOff();
-    } else {    
-      Serial.println("Right");
-      turnRightOn();
-      turnLeftOff();
-    }
-  }
+  failSafeTimer(30000);
+  delay(20);
+  runMotors(startMotorValue, 6, neededHeading);
 }
