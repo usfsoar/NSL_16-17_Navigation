@@ -1,3 +1,5 @@
+#include <Timer.h>
+#include <landerGPS.h>
 #include <Wire.h>
 #include <math.h>
 #include <Adafruit_Sensor.h> 
@@ -5,10 +7,7 @@
 #include <Adafruit_BMP085_U.h>
 #include <Adafruit_L3GD20_U.h>
 #include <Adafruit_10DOF.h>
-#include <Adafruit_GPS.h>
 #include <Servo.h>
-#include <SoftwareSerial.h>
-#define GPSECHO  false
 
 Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(30301);
 Adafruit_10DOF                dof   = Adafruit_10DOF();
@@ -26,23 +25,14 @@ Servo rightMotor;
 boolean rightMotorOn = false;
 boolean leftMotorOn = false;
 
-SoftwareSerial mySerial(3, 2);
-Adafruit_GPS GPS(&mySerial);
-
-boolean usingInterrupt = false;
-void useInterrupt(boolean); 
-
 float Pi = 3.14159;
-uint32_t startTime, timer;
+uint32_t startTime, timer1;
 
-class latLon
+struct latLon
 {
   public:
    float north, west;   
 };
-
-latLon cachedVal;
-latLon nullLatLon;
 
 float getNeededHeading(latLon currLoc, latLon neededLoc) {
   latLon relativeLoc;
@@ -71,58 +61,7 @@ float getCurrentHeading() {
   {
     return orientation.heading;
   }
-}
-
-SIGNAL(TIMER0_COMPA_vect) {
-  char c = GPS.read();
-#ifdef UDR0
-  if (GPSECHO)
-    if (c) UDR0 = c;  
-#endif
-}
-
-void useInterrupt(boolean v) {
-  if (v) {
-    OCR0A = 0xAF;
-    TIMSK0 |= _BV(OCIE0A);
-    usingInterrupt = true;
-  } else {
-    TIMSK0 &= ~_BV(OCIE0A);
-    usingInterrupt = false;
-  }
-}
-
-latLon getCurrentLatLon() {
-  if (! usingInterrupt) {
-    char c = GPS.read();
-  }
-  
-  if (GPS.newNMEAreceived()) {  
-    if (!GPS.parse(GPS.lastNMEA())) {
-      return cachedVal; 
-    }
-  }
-  if (timer > millis()) { 
-    timer = millis();
-  }
-
-  if (millis() - timer > 2000) { 
-    timer = millis();
-    
-    if (GPS.fix) {
-      cachedVal.north = GPS.latitudeDegrees;
-      cachedVal.west = GPS.longitudeDegrees;
-      latLon currLatLon;
-      currLatLon.north = GPS.latitudeDegrees;
-      currLatLon.west = GPS.longitudeDegrees;
-      return currLatLon;
-    } else {
-      Serial.println("No GPS Fix");
-      return nullLatLon;
-    }
-  }
-  return cachedVal;
-}
+}   
 
 void turnLeftMotorOn(int val) {
   leftMotor.writeMicroseconds(val);
@@ -152,19 +91,6 @@ void initDofBoard() {
   Serial.println("10 DOF board Initialized");
 }
 
-void initGPS() {
-  Serial.println("Initializing GPS");
-  GPS.begin(9600);
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);  
-  GPS.sendCommand(PGCMD_ANTENNA);
-
-  useInterrupt(true);
-  delay(1000);
-  mySerial.println(PMTK_Q_RELEASE); 
-  Serial.println("GPS Initialized"); 
-}
-
 void initMotors() {
   Serial.println("Initializing Motors");
   leftMotor.attach(leftMotorPin);
@@ -178,7 +104,7 @@ void initMotors() {
 }
 
 void failSafeTimer(int timeToShutOffMS) {
-  if (millis() - timer > timeToShutOffMS) {
+  if (millis() - timer1 > timeToShutOffMS) {
     turnRightMotorOff();
     turnLeftMotorOff();
     delay(100000);
@@ -207,10 +133,6 @@ void setup()  {
   Serial.begin(115200);
   initDofBoard();
   initMotors();
-  initGPS();
-  nullLatLon.north = 0;
-  nullLatLon.west = 0;
-  float timer = millis();
   neededLatLon.north = 28.048582; 
   neededLatLon.west = -82.410679;
 }
