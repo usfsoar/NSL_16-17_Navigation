@@ -35,13 +35,13 @@ void useInterrupt(boolean);
 float Pi = 3.14159;
 uint32_t startTime, timer;
 
-
 class latLon
 {
   public:
    float north, west;   
 };
 
+latLon cachedVal;
 latLon nullLatLon;
 
 float getNeededHeading(latLon currLoc, latLon neededLoc) {
@@ -51,11 +51,10 @@ float getNeededHeading(latLon currLoc, latLon neededLoc) {
 
   float angle = atan2(relativeLoc.north, relativeLoc.west);
   if(angle < 0) {
-    angle += 2*Pi; // atan2() has a domain of [-pi,pi] and we need it on a domain of [0,2pi]
+    angle += 2 * Pi; 
   }
-  angle = degrees(angle) + 90; // Have to add 90deg because on a compass, north is up, not to the right
-
-  Serial.print ("Calculated needed angle: "); Serial.println(angle);
+  angle = degrees(angle);
+  angle = int(450 - angle) % int(360);
   return angle;
 }
 
@@ -99,8 +98,9 @@ latLon getCurrentLatLon() {
   }
   
   if (GPS.newNMEAreceived()) {  
-    if (!GPS.parse(GPS.lastNMEA()))
-      return nullLatLon; 
+    if (!GPS.parse(GPS.lastNMEA())) {
+      return cachedVal; 
+    }
   }
   if (timer > millis()) { 
     timer = millis();
@@ -110,14 +110,18 @@ latLon getCurrentLatLon() {
     timer = millis();
     
     if (GPS.fix) {
+      cachedVal.north = GPS.latitudeDegrees;
+      cachedVal.west = GPS.longitudeDegrees;
       latLon currLatLon;
       currLatLon.north = GPS.latitudeDegrees;
       currLatLon.west = GPS.longitudeDegrees;
       return currLatLon;
     } else {
+      Serial.println("No GPS Fix");
       return nullLatLon;
     }
-  }  
+  }
+  return cachedVal;
 }
 
 void turnLeftMotorOn(int val) {
@@ -197,6 +201,8 @@ void runMotors(int start, int reductionFactor, int heading){
   }  
 }
 
+latLon neededLatLon;
+
 void setup()  {
   Serial.begin(115200);
   initDofBoard();
@@ -205,12 +211,12 @@ void setup()  {
   nullLatLon.north = 0;
   nullLatLon.west = 0;
   float timer = millis();
+  neededLatLon.north = 28.048582; 
+  neededLatLon.west = -82.410679;
 }
 
-float neededHeading = 90; // Static compass heading lander goes towards
-
-void loop(){
-  failSafeTimer(30000);
+void loop(){  
+  failSafeTimer(20000);
   delay(20);
-  runMotors(startMotorValue, 6, neededHeading);
+  runMotors(startMotorValue, 4, 90);
 }
