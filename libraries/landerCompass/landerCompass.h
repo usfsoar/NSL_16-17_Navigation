@@ -11,9 +11,10 @@ class landerCompass {
 			float north, west;
 		};
 		float getNeededHeading(latLon currLoc, latLon neededLoc), getCurrentHeading();
-		void initDofBoard();
+		void init(), enable(bool enable);
+		bool isEnabled();
+		int compassEnabled;
 
-	
 	private:
 		Adafruit_LSM303_Accel_Unified accel;
 		Adafruit_10DOF dof;

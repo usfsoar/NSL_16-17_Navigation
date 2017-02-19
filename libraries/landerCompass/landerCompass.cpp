@@ -7,6 +7,7 @@ Adafruit_10DOF                dof   = Adafruit_10DOF();
 Adafruit_LSM303_Mag_Unified   mag   = Adafruit_LSM303_Mag_Unified(30302);
 Adafruit_BMP085_Unified       bmp   = Adafruit_BMP085_Unified(18001);
 Adafruit_L3GD20_Unified       gyro  = Adafruit_L3GD20_Unified(20);
+int compassEnabled = -1;
 
 float landerCompass::getNeededHeading(landerCompass::latLon currLoc, landerCompass::latLon neededLoc) {
   latLon relativeLoc;
@@ -37,7 +38,15 @@ float landerCompass::getCurrentHeading() {
   }
 }  
 
-void landerCompass::initDofBoard() {
+void landerCompass::enable(bool enable) {
+	compassEnabled = (int)enable;
+}
+
+bool landerCompass::isEnabled() {
+	return compassEnabled;
+}
+
+void landerCompass::init() {
   Serial.println("Initializing 10 DOF board");
   
   if(!accel.begin() || !mag.begin() || !bmp.begin() || !gyro.begin()){
