@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include <Servo.h>
 #include <landerGPS.h>
-#include <landerCompass.h>
+#include <landerDOF.h>
 #include <landerMotors.h>
 
 class Lander {
@@ -14,7 +14,7 @@ class Lander {
 		void abort(), timeOut();
 		void navigateTo(int reductionFactor, int heading);
 		bool init();
-		landerCompass compass;
+		landerDOF dof;
 		landerGPS gps;
 		landerMotors motors;
 };

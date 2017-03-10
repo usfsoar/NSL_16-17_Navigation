@@ -14,7 +14,8 @@ void setup()  {
   lander.motors.setLeftPin(6);
   lander.motors.setRightPin(7);
   lander.motors.setMinVal(1250);
-  lander.compass.enable(true);
+  lander.dof.enable(true);
+  lander.dof.compass.enable(true);
   lander.gps.enable(false);
   lander.motors.enable(true);
   lander.motors.setMinVal(1250);

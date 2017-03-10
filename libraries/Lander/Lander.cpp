@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "Lander.h"
 
-landerCompass compass;
+landerDOF dof;
 landerGPS gps;
 landerMotors motors;
 
@@ -17,7 +17,7 @@ void Lander::abort() {
 
 void Lander::navigateTo(int reductionFactor, int heading){
 	int start = motors.getMinVal();
-	int difference = compass.getCurrentHeading() - heading;
+	int difference = dof.compass.getCurrentHeading() - heading;
  
 	if (difference < 0) {
 		difference += 360;
@@ -34,13 +34,13 @@ void Lander::navigateTo(int reductionFactor, int heading){
 	}
 
 bool Lander::init() {
-	if (compass.compassEnabled == -1 || motors.motorsEnabled == -1 || gps.gpsEnabled == -1) {
-		Serial.println("All sensors must be enabled or disabled..");
+	if (dof.dofEnabled == -1 || dof.compass.compassEnabled == -1 || motors.motorsEnabled == -1 || gps.gpsEnabled == -1) { /*FIXME*/
+		Serial.println("All sensors must be enabled or disabled.");
 		timeOut();
 	}
 	
-	if (compass.isEnabled())
-		compass.init();
+	if (dof.isEnabled())
+		dof.init();
 	if (motors.isEnabled())
 		motors.init();
 	if (gps.isEnabled())
