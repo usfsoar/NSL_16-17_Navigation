@@ -2,6 +2,7 @@
 #include "landerDOF.h"
 
 dofCompass compass;
+dofAltimeter altimeter;
 
 Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(30301);
 Adafruit_10DOF                tdof  = Adafruit_10DOF(); /* 'dof' is already in use, so use 'tdof' */
@@ -31,6 +32,8 @@ void landerDOF::init() {
 
   if (compass.isEnabled())
     compass.init();
+  if (altimeter.isEnabled())
+    altimeter.init();
 }
 
 

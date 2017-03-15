@@ -4,6 +4,7 @@
 #include <Adafruit_L3GD20_U.h>
 #include <Adafruit_10DOF.h>
 #include <dofCompass.h>
+#include <dofAltimeter.h>
 
 class landerDOF {
 	
@@ -15,6 +16,7 @@ class landerDOF {
 		bool isEnabled();
 		int dofEnabled;
 		dofCompass compass;
+		dofAltimeter altimeter;
 
 	protected:
 		Adafruit_LSM303_Accel_Unified accel;

@@ -26,15 +26,14 @@ void Lander::navigateTo(int reductionFactor, int heading){
 	if (difference <= 180) {
 		motors.rightOn(start + (difference / reductionFactor));
 		motors.leftOn(start);
-		} else {
-			motors.leftOn(start + ((360 - difference) / reductionFactor));
-			motors.rightOn(start);
-		}  
-	
+	} else {
+		motors.leftOn(start + ((360 - difference) / reductionFactor));
+		motors.rightOn(start);
 	}
+}
 
 bool Lander::init() {
-	if (dof.dofEnabled == -1 || dof.compass.compassEnabled == -1 || motors.motorsEnabled == -1 || gps.gpsEnabled == -1) { /*FIXME*/
+	if (dof.dofEnabled == -1 || dof.compass.compassEnabled == -1 || dof.altimeter.altimeterEnabled == -1 || motors.motorsEnabled == -1 || gps.gpsEnabled == -1) { /*FIXME*/
 		Serial.println("All sensors must be enabled or disabled.");
 		timeOut();
 	}

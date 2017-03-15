@@ -16,6 +16,7 @@ void setup()  {
   lander.motors.setMinVal(1250);
   lander.dof.enable(true);
   lander.dof.compass.enable(true);
+  lander.dof.altimeter.enable(true);
   lander.gps.enable(false);
   lander.motors.enable(true);
   lander.motors.setMinVal(1250);
