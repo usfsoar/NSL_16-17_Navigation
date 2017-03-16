@@ -6,8 +6,8 @@ class dofAltimeter {
 		struct latLon {
 			float north, west;
 		};
-		float getNeededTiltAngle(latLon currLoc, latLon neededLoc, float altitude), getCurrentAltitude(float groundLevelPressure);
-		void init(), enable(bool enable);
+		float getNeededTiltAngle(latLon currLoc, latLon neededLoc, float altitude), getCurrentAltitude();
+		void setGroundPressure(float val), init(), enable(bool enable);
 		bool isEnabled();
 		int altimeterEnabled;
 };

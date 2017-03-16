@@ -2,6 +2,7 @@
 #include "dofAltimeter.h"
 
 int altimeterEnabled = -1;
+float groundLevelPressure;
 
 float dofAltimeter::getNeededTiltAngle(dofAltimeter::latLon currLoc, dofAltimeter::latLon neededLoc, float altitude) {
   /* Range from 0 (straight down) to 90 (perpendicular) */
@@ -13,16 +14,12 @@ float dofAltimeter::getNeededTiltAngle(dofAltimeter::latLon currLoc, dofAltimete
   }
 
   float angle = degrees(atan2(altitude, dist));
-  /* angle should always be positive, as altitude and distance should always be positive */
+  /* angle should always be in first quadrant (0-90), as altitude and distance should always be positive */
 
   return angle;
 }
 
-float dofAltimeter::getCurrentAltitude(float groundLevelPressure) {
-  /* NOTE: groundLevelPressure is NOT pressure at sea level;
-     the camera aiming will work best when we use height above
-     ground rather than the tradition alt. above sea level; esp.
-     on flat ground like the launch site */
+float dofAltimeter::getCurrentAltitude() {
   sensors_event_t bmp_event;
   bmp.getEvent(&bmp_event)
 
@@ -37,8 +34,16 @@ float dofAltimeter::getCurrentAltitude(float groundLevelPressure) {
 
     return altitude;
   }
-}  
+}
 
+void dofAltimeter::setGroundPressure(float val) {
+  groundLevelPressure = val;
+  /* NOTE: groundLevelPressure is NOT pressure at sea level;
+   the camera aiming will work best when we use height above
+   ground rather than the tradition alt. above sea level; esp.
+   on flat ground like the launch site */
+}
+ 
 void dofAltimeter::enable(bool enable) {
 	altimeterEnabled = (int)enable;
 }

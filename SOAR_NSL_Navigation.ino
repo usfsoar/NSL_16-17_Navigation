@@ -5,16 +5,18 @@ struct latLon {
    float north, west;   
 };  
 
-latLon neededLatLon;
+latLon targetLoc;
 Lander lander;
 Timer failTimer;
 
-void setup()  {
+void setup() {
   Serial.begin(115200);
   lander.servos.setPin("pan", 6);
   lander.servos.setPin("tilt", 7);
   lander.dof.enable(true);
   lander.dof.compass.enable(true);
+  lander.dof.setGroundPressure(102600);
+  // Ground level (not sea level) pressure in Pa. Update daily, use barometer.
   lander.dof.altimeter.enable(true);
   lander.gps.enable(false);
   lander.motors.enable(true);
@@ -25,5 +27,6 @@ void loop(){
   while (failTimer.getElapsedTime() < 10 * 1000) {
     delay(20);
     //lander.navigateTo(4, 90);
+    lander.pointTo(targetLoc);
   }
 }
