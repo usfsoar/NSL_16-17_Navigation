@@ -20,6 +20,13 @@ bool landerDOF::isEnabled() {
 }
 
 void landerDOF::init() {
+  if (compass.compassEnabled == -1 || altimeter.altimeterEnabled == -1) {
+    Serial.println("All DOF sensors must be enabled or disabled.");
+    while (true) {
+      delay(1000);  
+    }
+  }
+
   Serial.println("Initializing 10 DOF board");
   
   if(!accel.begin() || !mag.begin() || !bmp.begin() || !gyro.begin()){
@@ -28,6 +35,7 @@ void landerDOF::init() {
       delay(1000);  
     }
   }
+  
   Serial.println("10 DOF board Initialized");
 
   if (compass.isEnabled())

@@ -3,19 +3,20 @@
 
 landerDOF dof;
 landerGPS gps;
-landerMotors motors;
+//landerMotors motors;
+landerServos servos;
 
 void timeOut() {
 	while (true) 
 		delay(500);
 }
 
-void Lander::abort() {
+/*void Lander::abort() {
 	motors.leftOff();
 	motors.rightOff();
-}
+}*/
 
-void Lander::navigateTo(int reductionFactor, int heading){
+/*void Lander::navigateTo(int reductionFactor, int heading){
 	int start = motors.getMinVal();
 	int difference = dof.compass.getCurrentHeading() - heading;
  
@@ -30,18 +31,18 @@ void Lander::navigateTo(int reductionFactor, int heading){
 		motors.leftOn(start + ((360 - difference) / reductionFactor));
 		motors.rightOn(start);
 	}
-}
+}*/
 
 bool Lander::init() {
-	if (dof.dofEnabled == -1 || dof.compass.compassEnabled == -1 || dof.altimeter.altimeterEnabled == -1 || motors.motorsEnabled == -1 || gps.gpsEnabled == -1) { /*FIXME*/
-		Serial.println("All sensors must be enabled or disabled.");
+	if (dof.dofEnabled == -1 || servos.servosEnabled == -1 || gps.gpsEnabled == -1) {
+		Serial.println("All sensors and components must be enabled or disabled.");
 		timeOut();
 	}
 	
 	if (dof.isEnabled())
 		dof.init();
-	if (motors.isEnabled())
-		motors.init();
+	if (servos.isEnabled())
+		servos.init();
 	if (gps.isEnabled())
 		gps.init();
 	

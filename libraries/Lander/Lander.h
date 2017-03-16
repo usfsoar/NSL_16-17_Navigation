@@ -2,7 +2,7 @@
 #include <Servo.h>
 #include <landerGPS.h>
 #include <landerDOF.h>
-#include <landerMotors.h>
+#include <landerServos.h>
 
 class Lander {
 	public:
@@ -16,5 +16,5 @@ class Lander {
 		bool init();
 		landerDOF dof;
 		landerGPS gps;
-		landerMotors motors;
+		landerServos servos;
 };
