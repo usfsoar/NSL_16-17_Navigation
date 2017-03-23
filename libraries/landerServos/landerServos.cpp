@@ -6,18 +6,18 @@ int panServoPin, tiltServoPin;
 Servo panServo;
 Servo tiltServo;
 
-void landerServos::setAngle(string servo, int val) {
-  if(servo == "pan" || servo == "panServo") {
+void landerServos::setAngle(int servo, int val) {
+  if(servo == 1) {
     panServo.write(val);
-  } else if(servo == "tilt" || servo == "tiltServo") {
+  } else if(servo == 2) {
     tiltServo.write(val);
   } else {
     Serial.println("Error with setAngle(servo, val) -- invalid servo name.");
   }
 }
 
-int landerServos::getAngle(string servo) {
-  if(servo == "pan" || servo == "panServo") {
+int landerServos::getAngle(int servo) {
+  if(servo == 1) {
 
     if (panServo.attached()) {
       return panServo.read();
@@ -25,7 +25,7 @@ int landerServos::getAngle(string servo) {
       return -1;
     }
     
-  } else if(servo == "tilt" || servo == "tiltServo") {
+  } else if(servo == 2) {
 
     if (tiltServo.attached()) {
       return tiltServo.read();
@@ -39,10 +39,10 @@ int landerServos::getAngle(string servo) {
   }
 }
 
-void landerServos::setPin(string servo, int pin) {
-  if(servo == "pan" || servo == "panServo") {
+void landerServos::setPin(int servo, int pin) {
+  if(servo == 1) {
     panServoPin = pin;
-  } else if(servo == "tilt" || servo == "tiltServo") {
+  } else if(servo == 2) {
     tiltServoPin = pin;
   } else {
     Serial.println("Error with readAngle(servo) -- invalid servo name.");

@@ -3,10 +3,10 @@
 
 class landerServos {
 	public:
-		void setAngle(string servo, int val), setPin(string servo, int pin);
+		void setAngle(int servo, int val), setPin(int servo, int pin);
 		void init(), enable(bool enable);
 		bool isEnabled();
-		int getAngle(string servo);
+		int getAngle(int servo);
 		
 	private:
 		int panServoPin, tilServoPin;

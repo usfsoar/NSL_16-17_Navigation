@@ -10,8 +10,12 @@ void timeOut() {
 		delay(500);
 }
 
-void Lander::pointTo(Lander::latLon targetLoc) {
+void Lander::pointTo() {
 	//Lander::latLon currentLoc = gps.getCurrentLatLon();
+	Lander::latLon targetLoc;
+	targetLoc.north = 0;
+	targetLoc.west = 0;
+
 	latLon currentLoc;
 	currentLoc.north = 28.06;
 	currentLoc.west = -82.42;
@@ -41,8 +45,8 @@ void Lander::pointTo(Lander::latLon targetLoc) {
 	}
 	//now we have full 0 to 360 pan, 0 to 90 tilt.
 
-	servos.setAngle("pan", panAngle);
-	servos.setAngle("tilt", tiltAngle);
+	servos.setAngle(1, panAngle);
+	servos.setAngle(2, tiltAngle);
 }
 
 bool Lander::init() {

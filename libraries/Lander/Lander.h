@@ -8,11 +8,8 @@ class Lander {
 	public:
 		struct latLon {
 			float north, west;   
-		};  
-	
-	public:
-		void abort(), timeOut();
-		void navigateTo(int reductionFactor, int heading);
+		};
+		void abort(), timeOut(), pointTo();
 		bool init();
 		landerDOF dof;
 		landerGPS gps;
