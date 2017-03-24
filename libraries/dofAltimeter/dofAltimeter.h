@@ -1,13 +1,22 @@
 #include "Arduino.h"
+#include "Adafruit_LSM303_U.h"
+#include "Adafruit_BMP085_U.h"
+#include "Adafruit_L3GD20_U.h"
+#include "Adafruit_10DOF.h"
 
 class dofAltimeter {
 	
 	public:
-		struct latLon {
-			float north, west;
-		};
-		float getNeededTiltAngle(latLon currLoc, latLon neededLoc, float altitude), getCurrentAltitude();
+		int getNeededTiltAngle(float currLoc[2], float neededLoc[2], int altitude), getCurrentAltitude();
+		float getDistanceBetween(float locA[2], float locB[2]);
 		void setGroundPressure(float val), init(), enable(bool enable);
 		bool isEnabled();
 		int altimeterEnabled;
+
+	protected:
+		Adafruit_LSM303_Accel_Unified accel;
+		Adafruit_10DOF tdof;
+		Adafruit_LSM303_Mag_Unified mag;
+		Adafruit_BMP085_Unified bmp;
+		Adafruit_L3GD20_Unified gyro;
 };

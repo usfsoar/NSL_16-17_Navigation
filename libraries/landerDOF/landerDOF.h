@@ -1,17 +1,14 @@
 #include "Arduino.h"
-#include <Adafruit_LSM303_U.h>
-#include <Adafruit_BMP085_U.h>
-#include <Adafruit_L3GD20_U.h>
-#include <Adafruit_10DOF.h>
+#include "Adafruit_LSM303_U.h"
+#include "Adafruit_BMP085_U.h"
+#include "Adafruit_L3GD20_U.h"
+#include "Adafruit_10DOF.h"
 #include <dofCompass.h>
 #include <dofAltimeter.h>
 
 class landerDOF {
 	
 	public:
-		struct latLon {
-			float north, west;
-		};
 		void init(), enable(bool enable);
 		bool isEnabled();
 		int dofEnabled;

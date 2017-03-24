@@ -1,14 +1,14 @@
 #include "Arduino.h"
-#include <Servo.h>
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 
 class landerServos {
 	public:
 		void setAngle(int servo, int val), setPin(int servo, int pin);
 		void init(), enable(bool enable);
 		bool isEnabled();
-		int getAngle(int servo);
+		int servosEnabled;
 		
 	private:
-		int panServoPin, tilServoPin;
-		Servo panServo, tiltServo;
+		int panServoPin, tiltServoPin;
 };

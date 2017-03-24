@@ -27,16 +27,16 @@ void landerDOF::init() {
     }
   }
 
-  Serial.println("Initializing 10 DOF board");
+  Serial.println("Initializing 10 DOF board...");
   
   if(!accel.begin() || !mag.begin() || !bmp.begin() || !gyro.begin()){
-    Serial.println("Unable to start 10 DOF board");
+    Serial.println("Unable to start 10 DOF board.");
     while (true) {
       delay(1000);  
     }
   }
   
-  Serial.println("10 DOF board Initialized");
+  Serial.println("10 DOF board Initialized.");
 
   if (compass.isEnabled())
     compass.init();

@@ -3,12 +3,6 @@
 class landerGPS {
 	
 	public:
-		struct latLon {
-			public:
-				float north, west;
-		};
-	
-	public:
 		void init();
 		void enable(bool enable);
 		bool isEnabled();
@@ -18,5 +12,5 @@ class landerGPS {
 		bool usingInterrupt;
 		void useInterrupt();
 		uint32_t timer;
-		latLon cachedVal, nullLatLon, getCurrentLatLon();
+		float cachedVal[2], nullLatLon[2], * getCurrentLatLon();
 };
