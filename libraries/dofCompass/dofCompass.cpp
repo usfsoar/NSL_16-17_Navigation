@@ -15,7 +15,7 @@ int dofCompass::getNeededHeading(float currLoc[2], float neededLoc[2]) {
   angle = degrees(angle);
   angle = int(450 - angle) % int(360);
 
-  Serial.print("Needed heading: ");
+  Serial.print(F("Needed heading: "));
   Serial.println(angle);
   return angle;
 }
@@ -30,8 +30,8 @@ int dofCompass::getCurrentHeading() {
   mag.getEvent(&mag_event);
   if (tdof.magGetOrientation(SENSOR_AXIS_Z, &mag_event, &orientation))
   {
-    Serial.print("Current heading: ");
-    Serial.println(orientation.heading);
+    Serial.print(F("Current heading: "));
+    Serial.println((int)orientation.heading);
     return (int)orientation.heading;
   }
 }  
@@ -45,5 +45,5 @@ bool dofCompass::isEnabled() {
 }
 
 void dofCompass::init() {
-  Serial.println("Compass Initialized");
+  Serial.println(F("Compass Initialized"));
 }

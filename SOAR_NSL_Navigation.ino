@@ -4,7 +4,7 @@
 Lander lander;
 Timer failTimer;
 
-float targetLoc[2] = {0,0};
+float targetLoc[2] = {28.053644, -82.426969};
 
 void setup() {
   Serial.begin(115200);
@@ -13,7 +13,7 @@ void setup() {
   lander.servos.setPin(2, 1);
   lander.dof.enable(true);
   lander.dof.compass.enable(true);
-  lander.dof.altimeter.setGroundPressure(102600);
+  lander.dof.altimeter.setGroundPressure(101325);
   // Ground level (not sea level) pressure in Pa. Update daily, use barometer.
   lander.dof.altimeter.enable(true);
   lander.gps.enable(false);
@@ -23,9 +23,9 @@ void setup() {
 }
 
 void loop(){  
-  while (failTimer.getElapsedTime() < 10 * 1000) {
-    delay(2000);
+  while (failTimer.getElapsedTime() < 30000) {
     //lander.navigateTo(4, 90);
     lander.pointTo(targetLoc);
+    Serial.println(F("---------------------NEW LOOP--------------------"));
   }
 }

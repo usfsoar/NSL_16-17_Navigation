@@ -13,14 +13,14 @@ void Lander::timeOut() {
 void Lander::pointTo(float targetLoc[2]) {
 	//Lander::latLon currentLoc = gps.getCurrentLatLon();
 
-	float currentLoc[2] = {28.06,-82.42};
+	float currentLoc[2] = {28.069335, -82.401810};
 	//Currently set to JP Hall as a placeholder until GPS enabled
 
 	int neededHeading = dof.compass.getNeededHeading(currentLoc, targetLoc);
-	Serial.print("Needed heading.: "); 
+	Serial.print(F("Needed heading.: ")); 
 	Serial.println(neededHeading);
 	int currentHeading = dof.compass.getCurrentHeading();
-	Serial.print("Current heading: "); 
+	Serial.print(F("Current heading: ")); 
 	Serial.println(currentHeading);
 	int panAngle = neededHeading - currentHeading;
 	//panAngle ranges from -360 to 360, but our servo only ranges from 0 to 180
@@ -29,7 +29,7 @@ void Lander::pointTo(float targetLoc[2]) {
 	}
 	//panAngle ranges from 0 to +360 now
 
-	int currentAltitude = dof.altimeter.getCurrentAltitude();
+	float currentAltitude = dof.altimeter.getCurrentAltitude();
 	int tiltAngle = dof.altimeter.getNeededTiltAngle(currentLoc, targetLoc, currentAltitude);
 	//now we can point at any spot from 0 to 180 pan, 0 to 45 tilt
 	
@@ -41,24 +41,24 @@ void Lander::pointTo(float targetLoc[2]) {
 		//tilt in the opposite direction
 	}
 	//now we have full 0 to 360 pan, 0 to 45 tilt.
-	Serial.print("Pan servo setting to... "); 
+	Serial.print(F("Pan servo setting to... ")); 
 	Serial.println(panAngle);
-	Serial.print("Tilt servo setting to... "); 
+	Serial.print(F("Tilt servo setting to... ")); 
 	Serial.println(tiltAngle);
 
 
 	servos.setAngle(1, panAngle);
 	servos.setAngle(2, tiltAngle);
-	Serial.print("Pan servo set to: "); 
+	Serial.print(F("Pan servo set to: ")); 
 	Serial.println(panAngle);
-	Serial.print("Tilt servo set to: "); 
+	Serial.print(F("Tilt servo set to: ")); 
 	Serial.println(tiltAngle);
 
 }
 
 bool Lander::init() {
 	if (dof.dofEnabled == -1 || servos.servosEnabled == -1 || gps.gpsEnabled == -1) {
-		Serial.println("All sensors and components must be enabled or disabled.");
+		Serial.println(F("All sensors and components must be enabled or disabled."));
 		timeOut();
 	}
 	
@@ -69,5 +69,5 @@ bool Lander::init() {
 	if (gps.isEnabled())
 		gps.init();
 	
-	Serial.println("Lander initialized");
+	Serial.println(F("Lander initialized"));
 }

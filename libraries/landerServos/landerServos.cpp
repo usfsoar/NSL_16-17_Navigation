@@ -18,33 +18,33 @@ void landerServos::setAngle(int servo, int val) {
   if(servo == 1) {
     int pulselen = map(val, 0, PANRANGE, PANMIN, PANMAX);
     pwm.setPWM(panServoPin, 0, pulselen);
-    Serial.print("Pan servo angle set: ");
+    Serial.print(F("Pan servo angle set: "));
     Serial.println(val);
 
   } else if(servo == 2) {
     int pulselen = map(val, 0, TLTRANGE, TLTMIN, TLTMAX);
     pwm.setPWM(tiltServoPin, 0, pulselen);
-    Serial.print("Tilt servo angle set: ");
+    Serial.print(F("Tilt servo angle set: "));
     Serial.println(val);
 
   } else {
-    Serial.println("Error at setAngle(servo, val) -- valid servos are 1 and 0.");
+    Serial.println(F("Error at setAngle(servo, val) -- valid servos are 1 and 0."));
   }
 }
 
 void landerServos::setPin(int servo, int pin) {
   if(servo == 1) {
     panServoPin = pin;
-    Serial.print("Pan pin set:");
+    Serial.print(F("Pan pin set:"));
     Serial.println(pin);
 
   } else if(servo == 2) {
     tiltServoPin = pin;
-    Serial.print("Tilt pin set:");
+    Serial.print(F("Tilt pin set:"));
     Serial.println(pin);
 
   } else {
-    Serial.println("Error at setPin(servo, pin) -- valid servos are 1 and 0.");
+    Serial.println(F("Error at setPin(servo, pin) -- valid servos are 1 and 0."));
   }
 }
 
@@ -60,5 +60,5 @@ void landerServos::init() {
   pwm.begin();
   pwm.setPWMFreq(60);
   yield();
-  Serial.print("Servos intialized.");
+  Serial.println(F("Servos intialized"));
 }
