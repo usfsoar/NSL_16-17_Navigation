@@ -8,7 +8,7 @@ class dofAltimeter {
 	
 	public:
 		int getNeededTiltAngle(float currLoc[2], float neededLoc[2], float altitude);
-		float getDistanceBetween(float locA[2], float locB[2]), getCurrentAltitude(), degToRad(float deg);
+		float getDistanceBetween(float locA[2], float locB[2]), getCurrentAltitude(), degToRad(float deg), radToDeg(float rad);
 		void setGroundPressure(float val), init(), enable(bool enable);
 		bool isEnabled();
 		int altimeterEnabled;

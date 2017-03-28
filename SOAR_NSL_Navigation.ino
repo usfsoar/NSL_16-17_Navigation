@@ -4,7 +4,7 @@
 Lander lander;
 Timer failTimer;
 
-float targetLoc[2] = {28.053644, -82.426969};
+float targetLoc[2] = {28.057848, -82.419760};
 
 void setup() {
   Serial.begin(115200);
@@ -22,10 +22,13 @@ void setup() {
   failTimer.start();
 }
 
-void loop(){  
-  while (failTimer.getElapsedTime() < 30000) {
-    //lander.navigateTo(4, 90);
+int loopNo = 0;
+
+void loop() {  
+  while (failTimer.getElapsedTime() < 1000) {
+    loopNo++;
     lander.pointTo(targetLoc);
     Serial.println(F("---------------------NEW LOOP--------------------"));
+    delay(200);
   }
 }

@@ -13,7 +13,7 @@ void Lander::timeOut() {
 void Lander::pointTo(float targetLoc[2]) {
 	//Lander::latLon currentLoc = gps.getCurrentLatLon();
 
-	float currentLoc[2] = {28.069335, -82.401810};
+	float currentLoc[2] = {28.054506, -82.425972};
 	//Currently set to JP Hall as a placeholder until GPS enabled
 
 	int neededHeading = dof.compass.getNeededHeading(currentLoc, targetLoc);

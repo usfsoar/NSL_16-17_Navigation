@@ -5,11 +5,15 @@ int altimeterEnabled = -1;
 float groundLevelPressure;
 
 float dofAltimeter::degToRad(float deg) {
-  return (deg * 3.14159265358979323846 / 180);
+  return (deg * PI / 180);
+}
+
+float dofAltimeter::radToDeg(float rad) {
+  return (rad * 180 / PI);
 }
 
 float dofAltimeter::getDistanceBetween(float locA[2], float locB[2]) {
-  float radius = 6371.0; // Radius of Earth
+  float radius = 6371000.0; // Radius of Earth, km
   float radLocA[2], radLocB[2], dLoc[2];
 
   // Radians:
@@ -36,7 +40,7 @@ int dofAltimeter::getNeededTiltAngle(float currLoc[2], float neededLoc[2], float
     altitude = 0;
   }
 
-  int angle = (int)atan2(altitude, dist) * 180 / 3.141592; // Degrees
+  int angle = (int)round(radToDeg(atan2(dist, altitude))); // Degrees
   // angle should always be in first quadrant (0-90), as altitude and distance should always be positive
 
   if (angle > 45) {
@@ -68,10 +72,11 @@ float dofAltimeter::getCurrentAltitude() {
     Serial.println(bmp_event.pressure);
     Serial.print(F("Current altitude: "));
     Serial.println(altitude);
-    return altitude;
+  } else {
+    Serial.print(F("ERROR: did not recieve prssure event."));
   }
 
-
+  return altitude;
 }
 
 void dofAltimeter::setGroundPressure(float val) {
