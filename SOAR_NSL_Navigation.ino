@@ -1,29 +1,34 @@
 #include "Timer.h"
 #include "Lander.h"
 
-struct latLon {
-   float north, west;   
-};  
-
-latLon neededLatLon;
 Lander lander;
 Timer failTimer;
 
-void setup()  {
+float targetLoc[2] = {28.057848, -82.419760};
+
+void setup() {
   Serial.begin(115200);
-  lander.motors.setLeftPin(6);
-  lander.motors.setRightPin(7);
-  lander.motors.setMinVal(1250);
-  lander.compass.enable(true);
+  delay(2000);
+  lander.servos.setPin(1, 0);
+  lander.servos.setPin(2, 1);
+  lander.dof.enable(true);
+  lander.dof.compass.enable(true);
+  lander.dof.altimeter.setGroundPressure(101325);
+  // Ground level (not sea level) pressure in Pa. Update daily, use barometer.
+  lander.dof.altimeter.enable(true);
   lander.gps.enable(false);
-  lander.motors.enable(true);
-  lander.motors.setMinVal(1250);
+  lander.servos.enable(true);
+  lander.init();
   failTimer.start();
 }
 
-void loop(){  
-  while (failTimer.getElapsedTime() < 10 * 1000) {
-    delay(20);
-    lander.navigateTo(4, 90);
+int loopNo = 0;
+
+void loop() {  
+  while (failTimer.getElapsedTime() < 1000) {
+    loopNo++;
+    lander.pointTo(targetLoc);
+    Serial.println(F("---------------------NEW LOOP--------------------"));
+    delay(200);
   }
 }

@@ -1,20 +1,14 @@
 #include "Arduino.h"
 #include <Servo.h>
 #include <landerGPS.h>
-#include <landerCompass.h>
-#include <landerMotors.h>
+#include <landerDOF.h>
+#include <landerServos.h>
 
 class Lander {
 	public:
-		struct latLon {
-			float north, west;   
-		};  
-	
-	public:
-		void abort(), timeOut();
-		void navigateTo(int reductionFactor, int heading);
+		void abort(), timeOut(), pointTo(float targetLoc[2]);
 		bool init();
-		landerCompass compass;
+		landerDOF dof;
 		landerGPS gps;
-		landerMotors motors;
+		landerServos servos;
 };

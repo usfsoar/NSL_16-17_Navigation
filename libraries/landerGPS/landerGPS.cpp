@@ -13,8 +13,6 @@ int gpsEnabled = -1;
 // void useInterrupt(boolean); 
 
 uint32_t timer;
-landerGPS::latLon cachedVal;
-landerGPS::latLon nullLatLon;
 
 /* SIGNAL(TIMER0_COMPA_vect) {
   char c = GPS.read();
@@ -35,7 +33,11 @@ landerGPS::latLon nullLatLon;
   }
 } */
 
-landerGPS::latLon landerGPS::getCurrentLatLon() {
+float * landerGPS::getCurrentLatLon() {
+  static float cachedVal[2];
+  static float nullLatLon[2];
+  static float currLatLon[2];
+
   if (! usingInterrupt) {
     char c = GPS.read();
   }
@@ -53,14 +55,13 @@ landerGPS::latLon landerGPS::getCurrentLatLon() {
     timer = millis();
     
     if (GPS.fix) {
-      cachedVal.north = GPS.latitudeDegrees;
-      cachedVal.west = GPS.longitudeDegrees;
-      latLon currLatLon;
-      currLatLon.north = GPS.latitudeDegrees;
-      currLatLon.west = GPS.longitudeDegrees;
+      cachedVal[0] = GPS.latitudeDegrees;
+      cachedVal[1] = GPS.longitudeDegrees;
+      currLatLon[0] = GPS.latitudeDegrees;
+      currLatLon[1] = GPS.longitudeDegrees;
       return currLatLon;
     } else {
-      Serial.println("No GPS Fix");
+      Serial.println(F("No GPS Fix"));
       return nullLatLon;
     }
   }
@@ -76,7 +77,7 @@ bool landerGPS::isEnabled() {
 }
 
 void landerGPS::init() {
-  Serial.println("Initializing GPS");
+  /*Serial.println(F("Initializing GPS"));
   GPS.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);  
@@ -85,5 +86,6 @@ void landerGPS::init() {
   // useInterrupt(true);
   delay(1000);
   mySerial.println(PMTK_Q_RELEASE); 
-  Serial.println("GPS Initialized"); 
+  Serial.println(F("GPS Initialized")); */
+  Serial.println(F("GPS Not Enabled."));
 }
