@@ -1,8 +1,9 @@
 #include "Arduino.h"
 #include "landerDOF.h"
 
-dofCompass compass;
+//dofCompass compass;
 dofAltimeter altimeter;
+dofAHRS ahrs;
 
 Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(30301);
 Adafruit_10DOF                tdof  = Adafruit_10DOF(); /* 'dof' is already in use, so use 'tdof' */
@@ -20,7 +21,7 @@ bool landerDOF::isEnabled() {
 }
 
 void landerDOF::init() {
-  if (compass.compassEnabled == -1 || altimeter.altimeterEnabled == -1) {
+  if (/*compass.compassEnabled == -1 ||*/altimeter.altimeterEnabled == -1 || ahrs.ahrsEnabled == -1) {
     Serial.println(F("All DOF sensors must be enabled or disabled."));
     while (true) {
       delay(1000);  
@@ -29,7 +30,7 @@ void landerDOF::init() {
 
   Serial.println(F("Initializing 10 DOF board..."));
   
-  if(!accel.begin() || !mag.begin() || !bmp.begin() || !gyro.begin()){
+  if(!accel.begin() || !mag.begin() || !bmp.begin()){
     Serial.println(F("Unable to start 10 DOF board."));
     while (true) {
       delay(1000);  
@@ -38,10 +39,12 @@ void landerDOF::init() {
   
   Serial.println(F("10 DOF board Initialized."));
 
-  if (compass.isEnabled())
-    compass.init();
+//  if (compass.isEnabled())
+//    compass.init();
   if (altimeter.isEnabled())
     altimeter.init();
+  if (ahrs.isEnabled())
+    ahrs.init();
 }
 
 

@@ -1,21 +1,22 @@
 #include "Arduino.h"
+#include "Adafruit_Sensor.h"
 #include "Adafruit_LSM303_U.h"
 #include "Adafruit_BMP085_U.h"
 #include "Adafruit_L3GD20_U.h"
 #include "Adafruit_10DOF.h"
-//#include <dofCompass.h>
-#include <dofAltimeter.h>
-#include <dofAHRS.h>
+#include "Adafruit_Simple_AHRS.h"
 
-class landerDOF {
+class dofAHRS {
 	
 	public:
+		int * getCurrentOrientation(), 
+			* getCompensatedAngles(int hpr[3], int tilt, int pan),
+			getNeededHeading(float currLoc[2], float neededLoc[2]),
+			radToDeg(float rad);
+		float degToRad(int deg);
 		void init(), enable(bool enable);
 		bool isEnabled();
-		int dofEnabled;
-		//dofCompass compass;
-		dofAltimeter altimeter;
-		dofAHRS ahrs;
+		int ahrsEnabled;
 
 	protected:
 		Adafruit_LSM303_Accel_Unified accel;

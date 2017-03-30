@@ -3,32 +3,42 @@
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-#define PANMIN  200
-#define PANMAX  500
-#define PANRANGE  118
-
-#define TLTMIN  220
-#define TLTMAX  300
-#define TLTRANGE  45
+// angles (deg), then matching PWM (note: set to within servo range to avoid burnout):
+int panRanges[4] = {0,180,485,200};
+int tiltRanges[4] = {-45,45,204,365};
 
 int servosEnabled = -1;
-int panServoPin, tiltServoPin;
+int panServoPin = 0, tiltServoPin = 3;
 
-void landerServos::setAngle(int servo, int val) {
+int landerServos::constrainPWM(int val, int limitA, int limitB) {
+  if(val > limitA && val > limitB) {
+    return max(limitA, limitB);
+  } else if(val < limitA && val < limitB) {
+    return min(limitA, limitB);
+  } else {
+    return val;
+  }
+}
+
+void landerServos::setAngle(int servo, int angle) {
   if(servo == 1) {
-    int pulselen = map(val, 0, PANRANGE, PANMIN, PANMAX);
+    int pulselen = constrainPWM(map(angle, panRanges[0], panRanges[1], panRanges[2], panRanges[3]), panRanges[2], panRanges[3]);
     pwm.setPWM(panServoPin, 0, pulselen);
     Serial.print(F("Pan servo angle set: "));
-    Serial.println(val);
+    Serial.print(angle);
+    Serial.print(F(" deg; "));
+    Serial.println(pulselen);
 
   } else if(servo == 2) {
-    int pulselen = map(val, 0, TLTRANGE, TLTMIN, TLTMAX);
+    int pulselen = constrainPWM(map(angle, tiltRanges[0], tiltRanges[1], tiltRanges[2], tiltRanges[3]), tiltRanges[2], tiltRanges[3]);
     pwm.setPWM(tiltServoPin, 0, pulselen);
     Serial.print(F("Tilt servo angle set: "));
-    Serial.println(val);
+    Serial.print(angle);
+    Serial.print(F(" deg; "));
+    Serial.println(pulselen);
 
   } else {
-    Serial.println(F("Error at setAngle(servo, val) -- valid servos are 1 and 0."));
+    Serial.println(F("Error at setAngle(servo, val) -- valid servos are 1 (pan) and 2 (tilt)."));
   }
 }
 
@@ -44,7 +54,7 @@ void landerServos::setPin(int servo, int pin) {
     Serial.println(pin);
 
   } else {
-    Serial.println(F("Error at setPin(servo, pin) -- valid servos are 1 and 0."));
+    Serial.println(F("Error at setPin(servo, pin) -- valid servos are 1 (pan) and 2 (tilt)."));
   }
 }
 
@@ -59,6 +69,5 @@ bool landerServos::isEnabled() {
 void landerServos::init() {
   pwm.begin();
   pwm.setPWMFreq(60);
-  yield();
   Serial.println(F("Servos intialized"));
 }

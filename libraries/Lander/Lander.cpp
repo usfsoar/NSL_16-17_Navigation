@@ -16,44 +16,46 @@ void Lander::pointTo(float targetLoc[2]) {
 	float currentLoc[2] = {28.054506, -82.425972};
 	//Currently set to JP Hall as a placeholder until GPS enabled
 
-	int neededHeading = dof.compass.getNeededHeading(currentLoc, targetLoc);
-	Serial.print(F("Needed heading.: ")); 
+	int * orientation = dof.ahrs.getCurrentOrientation();
+
+	int neededHeading = dof.ahrs.getNeededHeading(currentLoc, targetLoc);
+	Serial.print(F("Needed heading: ")); 
 	Serial.println(neededHeading);
-	int currentHeading = dof.compass.getCurrentHeading();
+	int currentHeading = orientation[0];
 	Serial.print(F("Current heading: ")); 
 	Serial.println(currentHeading);
+
 	int panAngle = neededHeading - currentHeading;
-	//panAngle ranges from -360 to 360, but our servo only ranges from 0 to 180
-	if(panAngle < 0) {
-		panAngle += 360.0;
+	Serial.print(panAngle);
+	if(panAngle > 180) {
+		panAngle -= 360;
+	} else if(panAngle < -180) {
+		panAngle += 360;
 	}
-	//panAngle ranges from 0 to +360 now
+	Serial.print(panAngle);
+	//panAngle ranges from -180 (right) to +180 (left) now (because normal angles go CCW)
 
 	float currentAltitude = dof.altimeter.getCurrentAltitude();
 	int tiltAngle = dof.altimeter.getNeededTiltAngle(currentLoc, targetLoc, currentAltitude);
-	//now we can point at any spot from 0 to 180 pan, 0 to 45 tilt
+	//tiltAngle ranges from 0 (down) to 90 (horizontal)
 	
-	if (panAngle > 180)
-	{
-		panAngle = panAngle - 180;
+	//servos can only go 180deg, not 360
+	if (panAngle > 0) { //looking to the left
+		panAngle = 180 - panAngle;
 		//pan in the opposite direction
 		tiltAngle = -tiltAngle;
 		//tilt in the opposite direction
+	} else { //looking to the right
+		panAngle = -panAngle;
 	}
-	//now we have full 0 to 360 pan, 0 to 45 tilt.
-	Serial.print(F("Pan servo setting to... ")); 
-	Serial.println(panAngle);
-	Serial.print(F("Tilt servo setting to... ")); 
-	Serial.println(tiltAngle);
 
+	Serial.print(F("Pan servo setting: ")); 
+	Serial.println(panAngle);
+	Serial.print(F("Tilt servo setting: ")); 
+	Serial.println(tiltAngle);
 
 	servos.setAngle(1, panAngle);
 	servos.setAngle(2, tiltAngle);
-	Serial.print(F("Pan servo set to: ")); 
-	Serial.println(panAngle);
-	Serial.print(F("Tilt servo set to: ")); 
-	Serial.println(tiltAngle);
-
 }
 
 bool Lander::init() {

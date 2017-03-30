@@ -43,13 +43,16 @@ int dofAltimeter::getNeededTiltAngle(float currLoc[2], float neededLoc[2], float
   int angle = (int)round(radToDeg(atan2(dist, altitude))); // Degrees
   // angle should always be in first quadrant (0-90), as altitude and distance should always be positive
 
-  if (angle > 45) {
-    angle = 45;
-  }
-
   Serial.print(F("Needed tilt angle: "));
   Serial.println(angle);
-  return angle; //Degrees, range [0,45]
+  return angle; //Degrees, range [0,90]
+  /*
+  Lndr
+  |\
+  |A\ 
+  |  \
+  |   Trgt
+  */
 }
 
 
@@ -72,11 +75,11 @@ float dofAltimeter::getCurrentAltitude() {
     Serial.println(bmp_event.pressure);
     Serial.print(F("Current altitude: "));
     Serial.println(altitude);
+    return 500;
   } else {
     Serial.print(F("ERROR: did not recieve prssure event."));
+    return 0.0;
   }
-
-  return altitude;
 }
 
 void dofAltimeter::setGroundPressure(float val) {

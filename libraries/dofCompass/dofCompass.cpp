@@ -5,8 +5,8 @@ int compassEnabled = -1;
 
 int dofCompass::getNeededHeading(float currLoc[2], float neededLoc[2]) {
   float relativeLoc[2];
-  relativeLoc[0] = neededLoc[0] - currLoc[0];
-  relativeLoc[1] = neededLoc[1] - currLoc[1];
+  relativeLoc[0] = neededLoc[0] - currLoc[0]; //latitude
+  relativeLoc[1] = neededLoc[1] - currLoc[1]; //longitude
 
   int angle = (int)atan2(relativeLoc[0], relativeLoc[1]);
   if(angle < 0) {
