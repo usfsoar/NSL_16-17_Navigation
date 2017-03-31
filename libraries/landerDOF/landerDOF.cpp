@@ -10,10 +10,10 @@ Adafruit_10DOF                tdof  = Adafruit_10DOF(); /* 'dof' is already in u
 Adafruit_LSM303_Mag_Unified   mag   = Adafruit_LSM303_Mag_Unified(30302);
 Adafruit_BMP085_Unified       bmp   = Adafruit_BMP085_Unified(18001);
 Adafruit_L3GD20_Unified       gyro  = Adafruit_L3GD20_Unified(20);
-int dofEnabled = -1;
+bool dofEnabled = 0;
 
 void landerDOF::enable(bool enable) {
-  dofEnabled = (int)enable;
+  dofEnabled = enable;
 }
 
 bool landerDOF::isEnabled() {
