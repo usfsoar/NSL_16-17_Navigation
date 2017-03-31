@@ -22,7 +22,7 @@ float dofAltimeter::getCurrentAltitude() {
     Serial.println(bmp_event.pressure);
     Serial.print(F("Current altitude: "));
     Serial.println(altitude);
-    return 500;
+    return altitude;
   } else {
     Serial.print(F("ERROR: did not recieve prssure event."));
     return 0.0;
