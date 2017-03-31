@@ -3,8 +3,9 @@
 #include "Adafruit_BMP085_U.h"
 #include "Adafruit_L3GD20_U.h"
 #include "Adafruit_10DOF.h"
-#include <dofCompass.h>
+//#include <dofCompass.h>
 #include <dofAltimeter.h>
+#include <dofAHRS.h>
 
 class landerDOF {
 	
@@ -12,8 +13,9 @@ class landerDOF {
 		void init(), enable(bool enable);
 		bool isEnabled();
 		int dofEnabled;
-		dofCompass compass;
+		//dofCompass compass;
 		dofAltimeter altimeter;
+		dofAHRS ahrs;
 
 	protected:
 		Adafruit_LSM303_Accel_Unified accel;

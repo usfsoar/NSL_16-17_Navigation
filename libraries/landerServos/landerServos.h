@@ -4,10 +4,10 @@
 
 class landerServos {
 	public:
-		void setAngle(int servo, int val), setPin(int servo, int pin);
+		void setAngle(int servo, int angle), setPin(int servo, int pin);
 		void init(), enable(bool enable);
 		bool isEnabled();
-		int servosEnabled;
+		int servosEnabled, constrainPWM(int val, int limitA, int limitB);
 		
 	private:
 		int panServoPin, tiltServoPin;
