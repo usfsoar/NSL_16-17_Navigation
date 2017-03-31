@@ -1,17 +1,18 @@
 #include "Arduino.h"
 #include "landerServos.h"
+#include <avr/pgmspace.h>
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-#define PANMIN  200
-#define PANMAX  500
-#define PANRANGE  118
+const PROGMEM PANMIN = 200;
+const PROGMEM PANMAX = 500;
+const PROGMEM PANRANGE =  118;
 
-#define TLTMIN  220
-#define TLTMAX  300
-#define TLTRANGE  45
+const PROGMEM TLTMIN = 220;
+const PROGMEM TLTMAX = 300;
+const PROGMEM TLTRANGE = 45;
 
-int servosEnabled = -1;
+bool servosEnabled = 0;
 int panServoPin, tiltServoPin;
 
 void landerServos::setAngle(int servo, int val) {
@@ -49,7 +50,7 @@ void landerServos::setPin(int servo, int pin) {
 }
 
 void landerServos::enable(bool enable) {
-	servosEnabled = (int)enable;
+	servosEnabled = enable;
 }
 
 bool landerServos::isEnabled() {
