@@ -5,11 +5,6 @@ landerDOF dof;
 landerGPS gps;
 landerServos servos;
 
-void Lander::timeOut() {
-	while (true) 
-		delay(500);
-}
-
 void Lander::pointTo(float targetLoc[2]) {
 	//Lander::latLon currentLoc = gps.getCurrentLatLon();
 
@@ -70,17 +65,11 @@ void Lander::pointTo(float targetLoc[2]) {
 }
 
 bool Lander::init() {
-	if (dof.dofEnabled == -1 || servos.servosEnabled == -1 || gps.gpsEnabled == -1) {
-		Serial.println(F("All sensors and components must be enabled or disabled."));
-		timeOut();
+	if (!dof.init() || !servos.init() || !gps.init()) {
+		Serial.println(F("Failed to initialize lander."));
+		return false;
+	} else {
+		Serial.println(F("Lander initialized successfully."));
+		return true;
 	}
-	
-	if (dof.isEnabled())
-		dof.init();
-	if (servos.isEnabled())
-		servos.init();
-	if (gps.isEnabled())
-		gps.init();
-	
-	Serial.println(F("Lander initialized"));
 }

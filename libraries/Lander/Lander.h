@@ -6,7 +6,7 @@
 
 class Lander {
 	public:
-		void abort(), timeOut(), pointTo(float targetLoc[2]);
+		void pointTo(float targetLoc[2]);
 		bool init();
 		landerDOF dof;
 		landerGPS gps;

@@ -8,9 +8,8 @@ class dofAltimeter {
 	
 	public:
 		float getCurrentAltitude();
-		void setGroundPressure(float val), init(), enable(bool enable);
-		bool isEnabled();
-		int altimeterEnabled;
+		void setGroundPressure(float val);
+		bool init();
 
 	protected:
 		Adafruit_LSM303_Accel_Unified accel;

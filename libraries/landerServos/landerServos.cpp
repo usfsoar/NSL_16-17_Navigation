@@ -8,7 +8,6 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 const PROGMEM int panRanges[4] = {0,180,485,200};
 const PROGMEM int tiltRanges[4] = {-45,45,204,365};
 
-bool servosEnabled = 0;
 int panServoPin = 0, tiltServoPin = 3;
 
 int landerServos::constrainPWM(int val, int limitA, int limitB) {
@@ -59,16 +58,9 @@ void landerServos::setPin(int servo, int pin) {
   }
 }
 
-void landerServos::enable(bool enable) {
-	servosEnabled = enable;
-}
-
-bool landerServos::isEnabled() {
-	return servosEnabled;
-}
-
-void landerServos::init() {
+bool landerServos::init() {
   pwm.begin();
   pwm.setPWMFreq(60);
   Serial.println(F("Servos intialized"));
+  return true;
 }

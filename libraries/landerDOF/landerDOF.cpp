@@ -10,41 +10,16 @@ Adafruit_10DOF                tdof  = Adafruit_10DOF(); /* 'dof' is already in u
 Adafruit_LSM303_Mag_Unified   mag   = Adafruit_LSM303_Mag_Unified(30302);
 Adafruit_BMP085_Unified       bmp   = Adafruit_BMP085_Unified(18001);
 Adafruit_L3GD20_Unified       gyro  = Adafruit_L3GD20_Unified(20);
-bool dofEnabled = 0;
 
-void landerDOF::enable(bool enable) {
-  dofEnabled = enable;
-}
-
-bool landerDOF::isEnabled() {
-  return dofEnabled;
-}
-
-void landerDOF::init() {
-  if (/*compass.compassEnabled == -1 ||*/altimeter.altimeterEnabled == -1 || ahrs.ahrsEnabled == -1) {
-    Serial.println(F("All DOF sensors must be enabled or disabled."));
-    while (true) {
-      delay(1000);  
-    }
-  }
-
+bool landerDOF::init() {
   Serial.println(F("Initializing 10 DOF board..."));
-  
-  if(!accel.begin() || !mag.begin() || !bmp.begin()){
+  if(!altimeter.init() || !ahrs.init()){
     Serial.println(F("Unable to start 10 DOF board."));
-    while (true) {
-      delay(1000);  
-    }
+    return false;
+  } else {
+    Serial.println(F("10 DOF board Initialized."));
+    return true;
   }
-  
-  Serial.println(F("10 DOF board Initialized."));
-
-//  if (compass.isEnabled())
-//    compass.init();
-  if (altimeter.isEnabled())
-    altimeter.init();
-  if (ahrs.isEnabled())
-    ahrs.init();
 }
 
 

@@ -9,7 +9,7 @@
 SoftwareSerial mySerial(3, 2); //Adafruit_GPS GPS(&Serial1); -< using hdwr serial
 Adafruit_GPS GPS(&mySerial);
 bool usingInterrupt = false;
-int gpsEnabled = -1;
+
 // void useInterrupt(boolean); 
 
 uint32_t timer;
@@ -68,14 +68,6 @@ float * landerGPS::getCurrentLatLon() {
   return cachedVal;
 }
 
-void landerGPS::enable(bool enable) {
-	gpsEnabled = (int)enable;
-}
-
-bool landerGPS::isEnabled() {
-	return gpsEnabled;
-}
-
 void landerGPS::init() {
   /*Serial.println(F("Initializing GPS"));
   GPS.begin(9600);
@@ -88,4 +80,5 @@ void landerGPS::init() {
   mySerial.println(PMTK_Q_RELEASE); 
   Serial.println(F("GPS Initialized")); */
   Serial.println(F("GPS Not Enabled."));
+  return true;
 }

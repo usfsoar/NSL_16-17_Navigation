@@ -1,8 +1,10 @@
 #include "Arduino.h"
 #include "Timer.h"
 
+isRunning = false;
+
 void Timer::pause() {
-	if (not isRunning) {
+	if (!isRunning) {
 		isRunning = false;
 		totalRan += millis() - startTime;
 	}

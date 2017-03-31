@@ -14,9 +14,7 @@ class dofAHRS {
 			getNeededHeading(float currLoc[2], float neededLoc[2]),
 			radToDeg(float rad);
 		float degToRad(int deg), degToRadFloat(float deg), getDistanceBetween(float locA[2], float locB[2]);
-		void init(), enable(bool enable);
-		bool isEnabled();
-		int ahrsEnabled;
+		bool init();
 
 	protected:
 		Adafruit_LSM303_Accel_Unified accel;

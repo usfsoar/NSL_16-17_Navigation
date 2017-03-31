@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "dofAltimeter.h"
 
-int altimeterEnabled = -1;
 float groundLevelPressure;
 
 float dofAltimeter::getCurrentAltitude() {
@@ -38,20 +37,14 @@ void dofAltimeter::setGroundPressure(float val) {
   Serial.print(F("Ground pressure set to: "));
   Serial.println(val);
 }
- 
-void dofAltimeter::enable(bool enable) {
-	altimeterEnabled = (int)enable;
-}
 
-bool dofAltimeter::isEnabled() {
-	return altimeterEnabled;
-}
-
-void dofAltimeter::init() {
+bool dofAltimeter::init() {
   if(bmp.begin()) {
     Serial.println(F("Altimeter Initialized"));
+    return true;
   }
   else {
     Serial.println(F("Failed to initialize altimeter. Check wiring."));
+    return false;
   }
 }
