@@ -1,8 +1,6 @@
 #include "Arduino.h"
 #include "dofAHRS.h"
 
-int ahrsEnabled = -1;
-
 Adafruit_LSM303_Accel_Unified ahrsaccel(30301);
 Adafruit_LSM303_Mag_Unified   ahrsmag(30302);
 Adafruit_BMP085_Unified       ahrsbmp(18001);
@@ -72,17 +70,17 @@ int * dofAHRS::getCompensatedAngles(int hpr[3], float alt, int panAngle, float c
 		dist = getDistanceBetween(currentLoc, targetLoc), 
 		pitch = degToRad(hpr[1]), 
 		roll = degToRad(hpr[2]);
-		
+
 	// Magic:
 	float compVector[3] = {
-		cos(pan)*cos(pitch) + alt*sin(pitch),
+		dist*cos(pan)*cos(pitch) + alt*sin(pitch),
 		dist*sin(pan)*cos(roll) + dist*cos(pan)*sin(pitch)*sin(roll) - alt*cos(pitch)*sin(roll),
 		-dist*sin(pan)*sin(roll) + dist*cos(pan)*sin(pitch)*cos(roll) - alt*cos(pitch)*cos(roll)
 	};
 
 	float panPrime = atan2(compVector[1],compVector[0]);
 	float distPrime = compVector[1]/sin(panPrime);
-	if (abs(distPrime - compVector[0]/cos(panPrime)) > 0.5) {
+	if (abs(distPrime - compVector[0]/cos(panPrime)) > 0.1) {
 		Serial.println(F("ERROR!"));
 	}
 	float tiltPrime = atan2(distPrime,(-compVector[2]));
@@ -104,20 +102,14 @@ int dofAHRS::getNeededHeading(float currLoc[2], float neededLoc[2]) {
 	Serial.println(angle);
 	return angle;
 }
- 
-void dofAHRS::enable(bool enable) {
-	ahrsEnabled = (int)enable;
-}
-
-bool dofAHRS::isEnabled() {
-	return ahrsEnabled;
-}
 
 void dofAHRS::init() {
-  if(accel.begin() && mag.begin() && bmp.begin()) {
+  if(accel.begin() && mag.begin() && bmp.begin() && ahrsaccel.begin() && ahrsmag.begin() && ahrsbmp.begin()) {
     Serial.println(F("AHRS System Initialized"));
+    return true;
   }
   else {
     Serial.println(F("Failed to initialize AHRS system. Check wiring."));
+    return false;
   }
 }

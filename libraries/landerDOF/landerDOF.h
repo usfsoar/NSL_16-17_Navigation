@@ -10,10 +10,7 @@
 class landerDOF {
 	
 	public:
-		void init(), enable(bool enable);
-		bool isEnabled();
-		int dofEnabled;
-		//dofCompass compass;
+		bool init();
 		dofAltimeter altimeter;
 		dofAHRS ahrs;
 

@@ -4,31 +4,35 @@
 Lander lander;
 Timer failTimer;
 
-float targetLoc[2] = {28.057002, -82.428837};
+float targetLoc[2] = {28.061608, -82.426095};
 
 void setup() {
   Serial.begin(115200);
   delay(2000);
+
   lander.servos.setPin(1, 0); // pan servo
   lander.servos.setPin(2, 3); // tilt servo
+  // Ground level (not sea level) pressure in Pa. Update daily, use barometer.
+  lander.dof.altimeter.setGroundPressure(101325);
+
   lander.dof.enable(true);
   lander.dof.ahrs.enable(true);
-  lander.dof.altimeter.setGroundPressure(101325);
-  // Ground level (not sea level) pressure in Pa. Update daily, use barometer.
   lander.dof.altimeter.enable(true);
   lander.gps.enable(false);
   lander.servos.enable(true);
-  lander.init();
-  failTimer.start();
+
+  if(!lander.init()) {
+    Serial.println(F("ERROR: Lander failed to initialize. Quitting."));
+  } else {
+    Serial.println(F("Succesfully initialized lander. Starting."));
+    failTimer.start();
+  }
 }
 
-int loopNo = 0;
-
 void loop() {  
-  while (failTimer.getElapsedTime() < 30000) {
-    loopNo++;
+  while (failTimer.getElapsedTime() < 300000 && failTimer.isRunning) {
+    Serial.println(F("--------------------- NEW LOOP ---------------------"));
     lander.pointTo(targetLoc);
-    Serial.println(F("---------------------NEW LOOP--------------------"));
     delay(50);
   }
 }
