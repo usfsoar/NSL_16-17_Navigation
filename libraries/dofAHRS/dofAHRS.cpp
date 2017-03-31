@@ -13,6 +13,10 @@ float dofAHRS::degToRad(int deg) {
   return (deg * PI / 180);
 }
 
+float dofAHRS::degToRadFloat(float deg) {
+  return (deg * PI / 180);
+}
+
 int dofAHRS::radToDeg(float rad) {
   return (int)float(rad * 180 / PI);
 }
@@ -41,48 +45,60 @@ int * dofAHRS::getCurrentOrientation() {
 	return hpr;
 }
 
-int * dofAHRS::getCompensatedAngles(int hpr[3], int tilt, int pan) {
+float dofAHRS::getDistanceBetween(float locA[2], float locB[2]) {
+  float radius = 6371000.0; // Radius of Earth, km
+  float radLocA[2], radLocB[2], dLoc[2];
+
+  // Radians (needs to be floats, because of the huge radius):
+  radLocA[0] = degToRadFloat(locA[0]); 
+  radLocA[1] = degToRadFloat(locA[1]);
+  radLocB[0] = degToRadFloat(locB[0]);
+  radLocB[1] = degToRadFloat(locB[1]);
+
+  dLoc[0] = sin((radLocB[0] - radLocA[0])/2);
+  dLoc[1] = sin((radLocB[1] - radLocA[1])/2);
+
+  // Haversine (from http://stackoverflow.com/questions/10198985/calculating-the-distance-between-2-latitudes-and-longitudes-that-are-saved-in-a):
+  float dist = 2.0 * radius * asin(sqrt(dLoc[0] * dLoc[0] + cos(radLocA[0]) * cos(radLocB[0]) * dLoc[1] * dLoc[1]));
+
+  Serial.print(F("Distance calculated: "));
+  Serial.println(dist);
+  return dist; // Meters
+}
+
+int * dofAHRS::getCompensatedAngles(int hpr[3], float alt, int panAngle, float currentLoc[2], float targetLoc[2]) {
 	static int compAngles[2];
-	float alpha = degToRad(pan), beta = degToRad(-(90 - tilt)), psi = degToRad(hpr[0]), theta = degToRad(hpr[1]), phi = degToRad(hpr[2]);
-	//float compBeta = asin(-sin(theta)*cos(beta)*cos(alpha) + cos(theta)*sin(phi)*cos(beta)*sin(alpha) + cos(theta)cos(phi)sin(beta));
-	//float compAlpha = acos((cos(psi)*cos(theta)*cos(beta)*cos(alpha) + cos(psi)sin(theta)sin(phi)sin(alpha) - sin(psi)cos(phi)cos(beta)sin(alpha) + cos(psi)sin(theta)cos(phi)sin(beta) - sin(psi)sin(theta)sin(beta))/compBeta)
+	float pan = degToRad(panAngle), 
+		dist = getDistanceBetween(currentLoc, targetLoc), 
+		pitch = degToRad(hpr[1]), 
+		roll = degToRad(hpr[2]);
+		
+	// Magic:
+	float compVector[3] = {
+		cos(pan)*cos(pitch) + alt*sin(pitch),
+		dist*sin(pan)*cos(roll) + dist*cos(pan)*sin(pitch)*sin(roll) - alt*cos(pitch)*sin(roll),
+		-dist*sin(pan)*sin(roll) + dist*cos(pan)*sin(pitch)*cos(roll) - alt*cos(pitch)*cos(roll)
+	};
 
-	//compAngles[0] = radToDeg(compAlpha);
-	//compAngles[1] = -radToDeg(compBeta);
+	float panPrime = atan2(compVector[1],compVector[0]);
+	float distPrime = compVector[1]/sin(panPrime);
+	if (abs(distPrime - compVector[0]/cos(panPrime)) > 0.5) {
+		Serial.println(F("ERROR!"));
+	}
+	float tiltPrime = atan2(distPrime,(-compVector[2]));
 
-	compAngles[0] = tilt;
-	compAngles[1] = pan;
+	compAngles[0] = radToDeg(panPrime);
+	compAngles[1] = radToDeg(tiltPrime);
 
 	return compAngles;
 }
-
-/*int dofAHRS::getNeededHeading(float currLoc[2], float neededLoc[2]) {
-	float relativeLoc[2];
-	relativeLoc[0] = neededLoc[0] - currLoc[0]; //latitude
-	relativeLoc[1] = neededLoc[1] - currLoc[1]; //longitude
-
-	float radAngle = atan2(relativeLoc[0], relativeLoc[1]);
-
-	int angle = radToDeg(angle);
-	if(angle < 0) {
-		angle += 360; 
-	}
-	angle = int(450 - angle) % int(360);
-
-	Serial.print(F("Needed heading: "));
-	Serial.println(angle);
-	return angle;
-}*/
 
 int dofAHRS::getNeededHeading(float currLoc[2], float neededLoc[2]) {
 	float deltaLon = neededLoc[1] - currLoc[1]; //longitude
 	float y = sin(deltaLon) * cos(neededLoc[0]);
 	float x = cos(currLoc[0])*sin(neededLoc[0]) - sin(currLoc[0])*cos(neededLoc[0])*cos(deltaLon);
 	float radAngle = atan2(y,x);
-	int angle = radToDeg(radAngle);// - 90;
-	/*if(angle < -180) {
-		angle += 180; 
-	}*/
+	int angle = radToDeg(radAngle);
 
 	Serial.print(F("Needed heading: "));
 	Serial.println(angle);

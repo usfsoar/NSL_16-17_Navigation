@@ -25,10 +25,10 @@ void setup() {
 int loopNo = 0;
 
 void loop() {  
-  while (failTimer.getElapsedTime() < 300000) {
+  while (failTimer.getElapsedTime() < 30000) {
     loopNo++;
     lander.pointTo(targetLoc);
     Serial.println(F("---------------------NEW LOOP--------------------"));
-    delay(100);
+    delay(50);
   }
 }

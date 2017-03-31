@@ -26,17 +26,28 @@ void Lander::pointTo(float targetLoc[2]) {
 	Serial.println(currentHeading);
 
 	int panAngle = neededHeading - currentHeading;
-	Serial.print(panAngle);
 	if(panAngle > 180) {
 		panAngle -= 360;
 	} else if(panAngle < -180) {
 		panAngle += 360;
 	}
-	Serial.print(panAngle);
+	Serial.print(F("UnCompensated Pan Angle: ")); 
+	Serial.println(panAngle);
 	//panAngle ranges from -180 (right) to +180 (left) now (because normal angles go CCW)
 
-	float currentAltitude = dof.altimeter.getCurrentAltitude();
-	int tiltAngle = dof.altimeter.getNeededTiltAngle(currentLoc, targetLoc, currentAltitude);
+	float altitude = dof.altimeter.getCurrentAltitude();
+
+	int * angles = dof.ahrs.getCompensatedAngles(orientation, altitude, panAngle, currentLoc, targetLoc);
+
+	panAngle = angles[0];
+	int tiltAngle = angles[1];
+
+	Serial.print(F("Compensated Pan Angle: ")); 
+	Serial.println(panAngle);
+	Serial.print(F("Compensated Tilt Angle: ")); 
+	Serial.println(tiltAngle);
+	
+	//int tiltAngle = dof.altimeter.getNeededTiltAngle(currentLoc, targetLoc, currentAltitude);
 	//tiltAngle ranges from 0 (down) to 90 (horizontal)
 	
 	//servos can only go 180deg, not 360

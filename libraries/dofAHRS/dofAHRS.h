@@ -10,10 +10,10 @@ class dofAHRS {
 	
 	public:
 		int * getCurrentOrientation(), 
-			* getCompensatedAngles(int hpr[3], int tilt, int pan),
+			* getCompensatedAngles(int hpr[3], float alt, int panAngle, float currentLoc[2], float targetLoc[2]),
 			getNeededHeading(float currLoc[2], float neededLoc[2]),
 			radToDeg(float rad);
-		float degToRad(int deg);
+		float degToRad(int deg), degToRadFloat(float deg), getDistanceBetween(float locA[2], float locB[2]);
 		void init(), enable(bool enable);
 		bool isEnabled();
 		int ahrsEnabled;
