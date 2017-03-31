@@ -1,18 +1,18 @@
 #include "Arduino.h"
+#include "Adafruit_Sensor.h" //Necessary??
 #include "Adafruit_LSM303_U.h"
 #include "Adafruit_BMP085_U.h"
 #include "Adafruit_L3GD20_U.h"
 #include "Adafruit_10DOF.h"
-//#include <dofCompass.h>
-#include <dofAltimeter.h>
-#include <dofAHRS.h>
+#include "Adafruit_Simple_AHRS.h"
 
 class landerDOF {
 	
 	public:
 		bool init();
-		dofAltimeter altimeter;
-		dofAHRS ahrs;
+		int * getCurrentOrientation();
+		float getCurrentAltitude();
+		void setGroundPressure(float val);
 
 	protected:
 		Adafruit_LSM303_Accel_Unified accel;

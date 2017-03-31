@@ -68,7 +68,7 @@ float * landerGPS::getCurrentLatLon() {
   return cachedVal;
 }
 
-void landerGPS::init() {
+bool landerGPS::init() {
   /*Serial.println(F("Initializing GPS"));
   GPS.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
