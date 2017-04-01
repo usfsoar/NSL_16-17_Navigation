@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "Timer.h"
 
-isRunning = false;
+bool isRunning = false;
 
 void Timer::pause() {
 	if (!isRunning) {
