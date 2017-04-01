@@ -13,9 +13,31 @@ The code consists of several libraries along with the main `.ino` file, includin
 While the primary program controls timing, checks, and initlization, the `Lander` library serves to control the functions of the lander itself, and as such includes the `landerDOF`, `landerServos`, and `landerGPS` libraries, as well as several functions:
 
 #### Functions
+
+* `float degToRad(int deg), degToRadFloat(float deg); int radToDeg(float rad)`
+
+Self-explanatory utilities for converting degrees to radians and vice versa. We use the `degToRadFloat` for converting latitude and longitude degrees to radians because these need to be precise, but the camera angles are imprecise so they can be integer values.
+
+* `int getNeededHeading(float currLoc[2], float neededLoc[2])`
+
+Takes two points in `{float latitude, float longitude}` format and returns the heading in degrees from the first to the second, with 0 being north and angles measured counter-clockwise. Has a range of [-180, 180]. Uses the [forward azimuth formula](http://www.movable-type.co.uk/scripts/latlong.html#bearing) without conversion to normal compass bearings.
+
+* `float getDistanceBetween(float locA[2], float locB[2])`
+
+Takes two points in `{float latitude, float longitude}` format and returns the distance in meters, using the [haversine formula](http://www.movable-type.co.uk/scripts/latlong.html#bearing).
+
+* `int * getCompensatedAngles(int hpr[3], float alt, float currentLoc[2], float targetLoc[2])`
+
+Given the orientation (`hpr` in the format `{int heading, int pitch, int roll}`), altitude in meters, and current and target locations in `{float latitude, float longitude}` format, returns an array with pan (angle counter-clockwise from the x-axis of the landing module) and tilt (angle down from the xy-plane of the landing module) angles in degrees. Pan has a range of [-180,180] and tilt has a range of [-90,90], with -90 being the positive z-axis (up) and 90 being the negative z-axis (down).
+
+_Math:_
+This function works by first calculating the pan angle using the current heading and the target heading, then the distance, then performing a change in basis on the vector obtained by 〈dist\*cos(pan angle), dist\*sin(pan angle), -altitude〉. This is the vector from the lander to the point being aimed at. The matrices that are multiplied by the vector are shown below (where θ is the pitch angle (measured counter-clockwise about the y-axis, and φ is the roll angle (measured counter-clockwise about the *new* x-axis)):
+![](matrices.gif "Pitch and roll rotation matrices")
+Finally, if the transformed vector is 〈x,y,z〉, the new pan angle (panPrime) is obtained with arctan(y/x) and the new tilt angle with arctan(y\*(-z)/sin(panPrime)). 
+
 * `void pointTo(float targetLoc[2])`
 
-This function combines the data from the 10 degrees of freedom board and the GPS sensor to point the servos at a specific point defined by `targetLoc` where `targetLoc` is an array in the format `{float latitude, float longitude}`.
+Combines the data from the above functions, 10 degrees of freedom board, and the GPS sensor to point the servos at a specific point defined by `targetLoc` where `targetLoc` is an array in the format `{float latitude, float longitude}`.
 
 * `bool init()`
 
@@ -24,7 +46,22 @@ Checks if the lander sucessfully initiated and returns a boolean value. For `tru
 #### `landerDOF` Library
 The `landerDOF` library processes data from the [Adafruit 10-DOF IMU Breakout](https://www.adafruit.com/product/1604) sensor, including altitude data from pressure and temperature, and magnetometer data. 
 
-**Documentation coming soon.**
+##### Functions
+* `int * getCurrentOrientation()`
+
+Returns an array with the current orientation in the format `{int heading, int pitch, int roll}`. These values are intrinsic Euler angles in degrees measured counter-clockwise about the x, y, and z axes respectively.
+
+* `float getCurrentAltitude()`
+
+Returns the current altitude in meters. **Note:** it is important to set the _ground level pressure_ using the `setGroundPressure` function in order for this data to be accurate.
+
+* `setGroundPressure(float val)`
+
+Sets the current ground level pressure (NOT sea level pressure) in pascals.
+
+* `bool init()`
+
+Intitiates the 10 Degrees of Freedom sensors. Will return false if any of the sensors fail to initialize.
 
 #### `landerServos` Library
 This library provides functions for servo control. There are two [Hitech 5625-MG](http://www.servodatabase.com/servo/hitec/hs-5625mg) servos attached to a [16-Channel 12-bit PWM Servo Controller](https://www.adafruit.com/product/815). The pan servo is referred to as `1` and tilt as `2` when setting angles and pins.
