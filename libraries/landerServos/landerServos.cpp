@@ -6,7 +6,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 // angles (deg), then matching PWM (note: set to within servo range to avoid burnout):
 const PROGMEM int panRanges[4] = {0,180,485,200};
-const PROGMEM int tiltRanges[4] = {-45,45,204,365};
+const PROGMEM int tiltRanges[4] = {-45,45,220,350};
 
 int panServoPin = 0, tiltServoPin = 3;
 
