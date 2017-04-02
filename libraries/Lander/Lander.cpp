@@ -111,29 +111,34 @@ void Lander::pointTo(float targetLoc[2]) {
 	int * orientation = dof.getCurrentOrientation();
 	float altitude = dof.getCurrentAltitude();
 
-	int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);
-	int panAngle = angles[0], tiltAngle = angles[1];
 
-	Serial.print(F("Compensated Pan Angle: ")); 
-	Serial.println(panAngle);
-	Serial.print(F("Compensated Tilt Angle: ")); 
-	Serial.println(tiltAngle);
-	
-	//servos can only go 180deg, not 360
-	if (panAngle > 0) { //looking to the left
-		panAngle = 180 - panAngle;
-		tiltAngle = -tiltAngle;
-	} else { //looking to the right
-		panAngle = -panAngle;
+	if(orientation[0] != 0 && altitude > 5) {
+		int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);
+		int panAngle = angles[0], tiltAngle = angles[1];
+
+		Serial.print(F("Compensated Pan Angle: ")); 
+		Serial.println(panAngle);
+		Serial.print(F("Compensated Tilt Angle: ")); 
+		Serial.println(tiltAngle);
+		
+		//servos can only go 180deg, not 360
+		if (panAngle > 0) { //looking to the left
+			panAngle = 180 - panAngle;
+			tiltAngle = -tiltAngle;
+		} else { //looking to the right
+			panAngle = -panAngle;
+		}
+
+		Serial.print(F("Pan servo setting: ")); 
+		Serial.println(panAngle);
+		Serial.print(F("Tilt servo setting: ")); 
+		Serial.println(tiltAngle);
+
+		servos.setAngle(1, panAngle);
+		servos.setAngle(2, tiltAngle);
+	} else {
+		Serial.println(F("WARNING: Sensor returned strange value (likely error). Retrying."));
 	}
-
-	Serial.print(F("Pan servo setting: ")); 
-	Serial.println(panAngle);
-	Serial.print(F("Tilt servo setting: ")); 
-	Serial.println(tiltAngle);
-
-	servos.setAngle(1, panAngle);
-	servos.setAngle(2, tiltAngle);
 }
 
 // Initiation

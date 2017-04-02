@@ -13,7 +13,7 @@ void setup() {
   lander.servos.setPin(1, 0); // pan servo
   lander.servos.setPin(2, 3); // tilt servo
   // Ground level (not sea level) pressure in Pa. Update daily, use barometer.
-  lander.dof.setGroundPressure(101325);
+  lander.dof.setGroundPressure(1013.25);
   
   if(!lander.init()) {
     Serial.println(F("ERROR: Lander failed to initialize. Quitting."));

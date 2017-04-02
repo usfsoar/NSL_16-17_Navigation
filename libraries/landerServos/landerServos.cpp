@@ -64,8 +64,8 @@ bool landerServos::init() {
   pwm.begin();
   pwm.setPWMFreq(60);
   //setAngle(1,45);
-  pwm.setPWM(0, 0, map(45, 0, 180, 480, 200));
-  pwm.setPWM(3, 0, tiltBegin);
+  setAngle(1, 45);
+  pwm.setPWM(tiltServoPin, 0, tiltBegin);
   Serial.println(F("Servos intialized"));
   return true;
 }
