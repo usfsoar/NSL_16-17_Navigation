@@ -21,6 +21,7 @@ void setup() {
     Serial.println(F("Succesfully initialized lander. Starting."));
     failTimer.start();
   }
+  delay(5000);
 }
 
 void loop() {  

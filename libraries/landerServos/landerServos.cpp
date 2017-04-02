@@ -8,6 +8,8 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 const PROGMEM int panRanges[4] = {0,180,480,200};
 const PROGMEM int tiltRanges[4] = {-45,45,220,350};
 
+const PROGMEM int tiltBegin = 468;
+
 int panServoPin = 0, tiltServoPin = 3;
 
 int landerServos::constrainPWM(int val, int limitA, int limitB) {
@@ -21,7 +23,7 @@ int landerServos::constrainPWM(int val, int limitA, int limitB) {
 }
 
 void landerServos::setAngle(int servo, int angle) {
-  if(servo == 1) {
+  if(servo == 1) { // pan
     int pulselen = constrainPWM(map(angle, panRanges[0], panRanges[1], panRanges[2], panRanges[3]), panRanges[2], panRanges[3]);
     pwm.setPWM(panServoPin, 0, pulselen);
     Serial.print(F("Pan servo angle set: "));
@@ -29,7 +31,7 @@ void landerServos::setAngle(int servo, int angle) {
     Serial.print(F(" deg; "));
     Serial.println(pulselen);
 
-  } else if(servo == 2) {
+  } else if(servo == 2) { // tilt
     int pulselen = constrainPWM(map(angle, tiltRanges[0], tiltRanges[1], tiltRanges[2], tiltRanges[3]), tiltRanges[2], tiltRanges[3]);
     pwm.setPWM(tiltServoPin, 0, pulselen);
     Serial.print(F("Tilt servo angle set: "));
@@ -61,6 +63,9 @@ void landerServos::setPin(int servo, int pin) {
 bool landerServos::init() {
   pwm.begin();
   pwm.setPWMFreq(60);
+  //setAngle(1,45);
+  pwm.setPWM(0, 0, map(45, 0, 180, 480, 200));
+  pwm.setPWM(3, 0, tiltBegin);
   Serial.println(F("Servos intialized"));
   return true;
 }
