@@ -54,6 +54,7 @@ float Lander::getDistanceBetween(float locA[2], float locB[2]) {
 
 	Serial.print(F("Distance calculated: "));
 	Serial.println(dist);
+	setCommDistance(dist);
 	return dist; // Meters
 }
 
@@ -111,7 +112,6 @@ void Lander::pointTo(float targetLoc[2]) {
 	int * orientation = dof.getCurrentOrientation();
 	float altitude = dof.getCurrentAltitude();
 
-
 	if(orientation[0] != 0 && altitude > 3) {
 		int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);
 		int panAngle = angles[0], tiltAngle = angles[1];
@@ -141,14 +141,17 @@ void Lander::pointTo(float targetLoc[2]) {
 	}
 }
 
+void Lander::errorCheck() {
+	setDofError(dof.hasError());
+	setgpsHasFix(gps.hasFix());
+}
+
 // Initiation
 
 bool Lander::init() {
-	if (!dof.init() || !servos.init() || !gps.init()) {
-		Serial.println(F("Failed to initialize lander."));
-		return false;
-	} else {
-		Serial.println(F("Lander initialized successfully."));
-		return true;
-	}
+	dof.init();
+	gps.init();
+	servos.init();
+	
+	return true;
 }
