@@ -33,6 +33,10 @@ uint32_t timer;
 	}
 } */
 
+bool landerGPS::hasFix() {
+	return GPS.fix;
+}
+
 float * landerGPS::getCurrentLatLon() {
 	static float cachedVal[2];
 	static float nullLatLon[2];
@@ -69,7 +73,8 @@ float * landerGPS::getCurrentLatLon() {
 }
 
 bool landerGPS::init() {
-	/*Serial.println(F("Initializing GPS"));
+	/*
+	Serial.println(F("Initializing GPS"));
 	GPS.begin(9600);
 	GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
 	GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);	
@@ -78,7 +83,7 @@ bool landerGPS::init() {
 	// useInterrupt(true);
 	delay(1000);
 	mySerial.println(PMTK_Q_RELEASE); 
-	Serial.println(F("GPS Initialized")); */
-	Serial.println(F("GPS Not Enabled."));
+	Serial.println("Here");
+	Serial.println(GPS.LOCUS_ReadStatus());*/
 	return true;
 }
