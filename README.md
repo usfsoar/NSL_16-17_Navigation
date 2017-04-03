@@ -30,8 +30,8 @@ Takes two points in `{float latitude, float longitude}` format and returns the d
 Given the orientation (`hpr` in the format `{int heading, int pitch, int roll}`), altitude in meters, and current and target locations in `{float latitude, float longitude}` format, returns an array with pan (angle counter-clockwise from the x-axis of the landing module) and tilt (angle down from the xy-plane of the landing module) angles in degrees. Pan has a range of [-180,180] and tilt has a range of [-90,90], with -90 being the positive z-axis (up) and 90 being the negative z-axis (down).
 
 _Math:_
-This function works by first calculating the pan angle using the current heading and the target heading, then the distance, then performing a change in basis on the vector obtained by 〈dist\*cos(pan angle), dist\*sin(pan angle), -altitude〉. This is the vector from the lander to the point being aimed at. The matrices that are multiplied by the vector are shown below (where θ is the pitch angle (measured counter-clockwise about the y-axis, and φ is the roll angle (measured counter-clockwise about the *new* x-axis)):
-![](matrices.gif "Pitch and roll rotation matrices")
+This function works by first calculating the pan angle using the current heading and the target heading, then the distance, then performing a change in basis on the vector obtained by 〈dist\*cos(pan angle), dist\*sin(pan angle), -altitude〉. This is the vector from the lander to the point being aimed at. The matrices that are multiplied by the vector are shown below (where θ is the pitch angle (measured counter-clockwise about the y-axis, and φ is the roll angle (measured counter-clockwise about the *new* x-axis)): 
+![](matrices.gif "Pitch and roll rotation matrices") 
 Finally, if the transformed vector is 〈x,y,z〉, the new pan angle (panPrime) is obtained with arctan(y/x) and the new tilt angle with arctan(y\*(-z)/sin(panPrime)). 
 
 * `void pointTo(float targetLoc[2])`
@@ -54,13 +54,9 @@ Returns an array with the current orientation in the format `{int heading, int p
 
 Returns the current altitude in meters. **Note:** it is important to set the _ground level pressure_ using the `setGroundPressure` function in order for this data to be accurate.
 
-* `setGroundPressure(float val)`
-
-Sets the current ground level pressure (NOT sea level pressure) in pascals.
-
 * `bool init()`
 
-Intitiates the 10 Degrees of Freedom sensors. Will return false if any of the sensors fail to initialize.
+Intitiates the 10 Degrees of Freedom sensors and sets the ground level pressure as a the pressure when `init()` is run. Will return false if any of the sensors fail to initialize or no valid ground level pressure is recieved.
 
 #### `landerServos` Library
 This library provides functions for servo control. There are two [Hitech 5625-MG](http://www.servodatabase.com/servo/hitec/hs-5625mg) servos attached to a [16-Channel 12-bit PWM Servo Controller](https://www.adafruit.com/product/815). The pan servo is referred to as `1` and tilt as `2` when setting angles and pins.

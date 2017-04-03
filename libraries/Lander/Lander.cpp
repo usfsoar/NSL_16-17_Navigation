@@ -112,7 +112,7 @@ void Lander::pointTo(float targetLoc[2]) {
 	float altitude = dof.getCurrentAltitude();
 
 
-	if(orientation[0] != 0 && altitude > 5) {
+	if(orientation[0] != 0 && altitude > 3) {
 		int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);
 		int panAngle = angles[0], tiltAngle = angles[1];
 
@@ -137,7 +137,7 @@ void Lander::pointTo(float targetLoc[2]) {
 		servos.setAngle(1, panAngle);
 		servos.setAngle(2, tiltAngle);
 	} else {
-		Serial.println(F("WARNING: Sensor returned strange value (likely error). Retrying."));
+		Serial.println(F("WARNING: Altitude or heading returned strange value (likely error). Retrying."));
 	}
 }
 

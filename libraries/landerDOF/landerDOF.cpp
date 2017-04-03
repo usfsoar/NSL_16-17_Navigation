@@ -60,24 +60,26 @@ float landerDOF::getCurrentAltitude() {
 	}
 }
 
-void landerDOF::setGroundPressure(float val) {
-	groundLevelPressure = val;
-	/* NOTE: groundLevelPressure is NOT pressure at sea level;
-	 the camera aiming will work best when we use height above
-	 ground rather than the tradition alt. above sea level; esp.
-	 on flat ground like the launch site */
-	Serial.print(F("Ground pressure set to: "));
-	Serial.println(val);
-}
-
 bool landerDOF::init() {
 	Serial.println(F("Initializing 10 DOF board..."));
 	if(!accel.begin() || !mag.begin() || !bmp.begin()){
-		Serial.println(F("Unable to start 10 DOF board."));
+		Serial.println(F("ERROR: Unable to start 10 DOF board."));
 		return false;
 	} else {
-		Serial.println(F("10 DOF board Initialized."));
+		Serial.println(F("10 DOF board Initialized. Setting ground pressure..."));
+	}
+
+	sensors_event_t bmp_event;
+	bmp.getEvent(&bmp_event);
+
+	if (bmp_event.pressure && bmp_event.pressure > 0) {
+		groundLevelPressure = bmp_event.pressure;
+		Serial.print(F("GLP set to "));
+		Serial.println(bmp_event.pressure);
 		return true;
+	} else {
+		Serial.println(F("ERROR: did not recieve ground pressure event or recieved invalid value."));
+		return false;
 	}
 }
 

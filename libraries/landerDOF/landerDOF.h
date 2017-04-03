@@ -11,7 +11,6 @@ class landerDOF {
 		bool init();
 		int * getCurrentOrientation();
 		float getCurrentAltitude();
-		void setGroundPressure(float val);
 
 	protected:
 		Adafruit_LSM303_Accel_Unified accel;
