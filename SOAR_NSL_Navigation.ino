@@ -8,26 +8,30 @@ float targetLoc[2] = {28.061608, -82.426095};
 
 void setup() {
 	Serial.begin(57600);
+  initComms();
 	delay(2000);
+  
+  while (!piInit()) //Wait for Pi to tell us to start
+    delay(1000);
 
 	lander.servos.setPin(1, 0); // pan servo
 	lander.servos.setPin(2, 3); // tilt servo
-	// Ground level (not sea level) pressure in Pa. Update daily, use barometer.
-	lander.dof.setGroundPressure(1013.25);
 	
-	if(!lander.init()) {
-		Serial.println(F("ERROR: Lander failed to initialize. Quitting."));
-	} else {
-		Serial.println(F("Succesfully initialized lander. Starting."));
-		failTimer.start();
-	}
-	delay(5000);
+	lander.init();
+}
+
+void run() {
+  
 }
 
 void loop() {	
-	while (failTimer.getElapsedTime() < 300000 && failTimer.isRunning) {
-		Serial.println(F("--------------------- NEW LOOP ---------------------"));
-		lander.pointTo(targetLoc);
-		delay(50);
-	}
+  bool isDeployed = false;
+  
+  while (!isDeployed) {
+    lander.errorCheck();
+    delay(500);
+  }
+  //
+  lander.dof.getCurrentAltitude();
+  delay(500);
 }
