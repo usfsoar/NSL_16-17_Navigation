@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "landerDOF.h"
+#include <comms.h>
 
 Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(30301);
 Adafruit_10DOF								tdof	= Adafruit_10DOF(); /* 'dof' is already in use, so use 'tdof' */
@@ -53,11 +54,21 @@ float landerDOF::getCurrentAltitude() {
 		Serial.println(bmp_event.pressure);
 		Serial.print(F("Current altitude: "));
 		Serial.println(altitude);
+		setCommAltitude(altitude);
 		return altitude;
 	} else {
 		Serial.print(F("ERROR: did not recieve pressure event."));
 		return 0.0;
 	}
+}
+
+bool landerDOF::hasError() {
+	if (!accel.begin() || !mag.begin() || !bmp.begin()) {
+		Serial.println("Has Error");
+		return true;
+	}
+	else
+		return false;
 }
 
 bool landerDOF::init() {
@@ -68,12 +79,12 @@ bool landerDOF::init() {
 	} else {
 		Serial.println(F("10 DOF board Initialized. Setting ground pressure..."));
 	}
-
+	
 	sensors_event_t bmp_event;
 	bmp.getEvent(&bmp_event);
 
 	if (bmp_event.pressure && bmp_event.pressure > 0) {
-		groundLevelPressure = bmp_event.pressure;
+		//groundLevelPressure = bmp_event.pressure; TODO: Uncomment (Testing i2C control)
 		Serial.print(F("GLP set to "));
 		Serial.println(bmp_event.pressure);
 		return true;

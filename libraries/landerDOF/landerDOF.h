@@ -8,7 +8,7 @@
 class landerDOF {
 	
 	public:
-		bool init();
+		bool init(), hasError();
 		int * getCurrentOrientation();
 		float getCurrentAltitude();
 
