@@ -8,15 +8,15 @@ landerServos servos;
 // Helper Functions:
 
 float Lander::degToRad(int deg) {
-  return (deg * PI / 180);
+	return (deg * PI / 180);
 }
 
 float Lander::degToRadFloat(float deg) {
-  return (deg * PI / 180);
+	return (deg * PI / 180);
 }
 
 int Lander::radToDeg(float rad) {
-  return (int)float(rad * 180 / PI);
+	return (int)float(rad * 180 / PI);
 }
 
 // Latitude and Longitude Operations:
@@ -26,7 +26,7 @@ int Lander::getNeededHeading(float currLoc[2], float neededLoc[2]) {
 
 	// Forward azimuth formula:
 	float yval = sin(deltaLon)*cos(neededLoc[0]),
-		  xval = cos(currLoc[0])*sin(neededLoc[0]) - sin(currLoc[0])*cos(neededLoc[0])*cos(deltaLon);
+			xval = cos(currLoc[0])*sin(neededLoc[0]) - sin(currLoc[0])*cos(neededLoc[0])*cos(deltaLon);
 	float radAngle = atan2(yval,xval);
 
 	int angle = radToDeg(radAngle);
@@ -37,24 +37,24 @@ int Lander::getNeededHeading(float currLoc[2], float neededLoc[2]) {
 }
 
 float Lander::getDistanceBetween(float locA[2], float locB[2]) {
-  float radius = 6371000.0; // Radius of Earth, km
-  float radLocA[2], radLocB[2], dLoc[2];
+	float radius = 6371000.0; // Radius of Earth, km
+	float radLocA[2], radLocB[2], dLoc[2];
 
-  // Radians (deg needs to be floats, because it's lat and lon):
-  radLocA[0] = degToRadFloat(locA[0]); 
-  radLocA[1] = degToRadFloat(locA[1]);
-  radLocB[0] = degToRadFloat(locB[0]);
-  radLocB[1] = degToRadFloat(locB[1]);
+	// Radians (deg needs to be floats, because it's lat and lon):
+	radLocA[0] = degToRadFloat(locA[0]); 
+	radLocA[1] = degToRadFloat(locA[1]);
+	radLocB[0] = degToRadFloat(locB[0]);
+	radLocB[1] = degToRadFloat(locB[1]);
 
-  dLoc[0] = sin((radLocB[0] - radLocA[0])/2);
-  dLoc[1] = sin((radLocB[1] - radLocA[1])/2);
+	dLoc[0] = sin((radLocB[0] - radLocA[0])/2);
+	dLoc[1] = sin((radLocB[1] - radLocA[1])/2);
 
-  // Haversine Formula:
-  float dist = 2.0 * radius * asin(sqrt(dLoc[0] * dLoc[0] + cos(radLocA[0]) * cos(radLocB[0]) * dLoc[1] * dLoc[1]));
+	// Haversine Formula:
+	float dist = 2.0 * radius * asin(sqrt(dLoc[0] * dLoc[0] + cos(radLocA[0]) * cos(radLocB[0]) * dLoc[1] * dLoc[1]));
 
-  Serial.print(F("Distance calculated: "));
-  Serial.println(dist);
-  return dist; // Meters
+	Serial.print(F("Distance calculated: "));
+	Serial.println(dist);
+	return dist; // Meters
 }
 
 // Gyroscopic Compensation:
@@ -111,29 +111,34 @@ void Lander::pointTo(float targetLoc[2]) {
 	int * orientation = dof.getCurrentOrientation();
 	float altitude = dof.getCurrentAltitude();
 
-	int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);
-	int panAngle = angles[0], tiltAngle = angles[1];
 
-	Serial.print(F("Compensated Pan Angle: ")); 
-	Serial.println(panAngle);
-	Serial.print(F("Compensated Tilt Angle: ")); 
-	Serial.println(tiltAngle);
-	
-	//servos can only go 180deg, not 360
-	if (panAngle > 0) { //looking to the left
-		panAngle = 180 - panAngle;
-		tiltAngle = -tiltAngle;
-	} else { //looking to the right
-		panAngle = -panAngle;
+	if(orientation[0] != 0 && altitude > 3) {
+		int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);
+		int panAngle = angles[0], tiltAngle = angles[1];
+
+		Serial.print(F("Compensated Pan Angle: ")); 
+		Serial.println(panAngle);
+		Serial.print(F("Compensated Tilt Angle: ")); 
+		Serial.println(tiltAngle);
+		
+		//servos can only go 180deg, not 360
+		if (panAngle > 0) { //looking to the left
+			panAngle = 180 - panAngle;
+			tiltAngle = -tiltAngle;
+		} else { //looking to the right
+			panAngle = -panAngle;
+		}
+
+		Serial.print(F("Pan servo setting: ")); 
+		Serial.println(panAngle);
+		Serial.print(F("Tilt servo setting: ")); 
+		Serial.println(tiltAngle);
+
+		servos.setAngle(1, panAngle);
+		servos.setAngle(2, tiltAngle);
+	} else {
+		Serial.println(F("WARNING: Altitude or heading returned strange value (likely error). Retrying."));
 	}
-
-	Serial.print(F("Pan servo setting: ")); 
-	Serial.println(panAngle);
-	Serial.print(F("Tilt servo setting: ")); 
-	Serial.println(tiltAngle);
-
-	servos.setAngle(1, panAngle);
-	servos.setAngle(2, tiltAngle);
 }
 
 // Initiation
