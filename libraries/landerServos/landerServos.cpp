@@ -63,8 +63,8 @@ void landerServos::setPin(int servo, int pin) {
 bool landerServos::init() {
 	pwm.begin();
 	pwm.setPWMFreq(60);
-	//setAngle(1,45);
-	setAngle(1, 45);
+
+	setAngle(1, 45); //Initiral safe angle
 	pwm.setPWM(tiltServoPin, 0, tiltBegin);
 	Serial.println(F("Servos intialized"));
 	return true;

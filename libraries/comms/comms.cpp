@@ -3,9 +3,9 @@
 #include "Wire.h"
 
 int reqVal, commAltitude, commDistance;
-bool safeToStart = false, dofError, gpsError, gpsHasFix;
+bool safeToStart = false, dofError, gpsError, gpsHasFix, shutdown;
 
-const int ALTREQONE = 0, ALTREQTWO = 1, ERRORCODEREQ = 2, DISTREQONE = 3, DISTREQTWO = 4, INITREQ = 5, INITDOFREQ = 6, INITGPSREQ = 7, GPSFIXREQ = 8;
+const int ALTREQONE = 0, ALTREQTWO = 1, ERRORCODEREQ = 2, DISTREQONE = 3, DISTREQTWO = 4, INITREQ = 5, INITDOFREQ = 6, INITGPSREQ = 7, GPSFIXREQ = 8, SHUTDOWN = 9;
 
 int getFirstAltByte() {
 	return int(commAltitude / 100);
@@ -51,6 +51,12 @@ void sendData(){
 	  Wire.write(INITREQ);
 	  safeToStart = true;
   }
+  
+    if (reqVal == SHUTDOWN) {
+	  Wire.write(true);
+	  shutdown = true;
+  }
+  
 }
 
 void setCommAltitude(int alt) {
@@ -71,6 +77,10 @@ void setgpsHasFix(bool er) {
 
 void setGpsError(bool er) {
 	gpsError = er;
+}
+
+bool needToShutdown(){
+	return shutdown;
 }
 
 bool piInit() {

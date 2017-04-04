@@ -25,13 +25,23 @@ void run() {
 }
 
 void loop() {	
-  bool isDeployed = false;
+  bool isInRocket = false, isDeployed = false;
   
-  while (!isDeployed) {
+  while (!isInRocket) {
     lander.errorCheck();
-    delay(500);
+    delay(5000);
   }
-  //
-  lander.dof.getCurrentAltitude();
-  delay(500);
+  
+  while (isInRocket && !isDeployed)
+    delay(500);
+
+  while (!isInRocket && isDeployed) {
+    //pointTo
+    if (needToShutdown()) {
+      //setServos
+      while (true)
+        delay(500);
+    }
+  }
+  
 }

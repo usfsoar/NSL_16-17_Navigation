@@ -142,8 +142,9 @@ void Lander::pointTo(float targetLoc[2]) {
 }
 
 void Lander::errorCheck() {
-	setDofError(dof.hasError());
+	//setDofError(dof.hasError()); TODO Uncomment
 	setgpsHasFix(gps.hasFix());
+	setDofError(false);
 }
 
 // Initiation
