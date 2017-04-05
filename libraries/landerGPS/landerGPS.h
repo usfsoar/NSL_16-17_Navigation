@@ -3,7 +3,7 @@
 class landerGPS {
 	
 	public:
-		bool init(), hasFix();
+		bool init(), hasFix(), hasError();
 		float * getCurrentLatLon();
 		
 	private:
