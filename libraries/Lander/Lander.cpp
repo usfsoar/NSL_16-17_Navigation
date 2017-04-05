@@ -57,6 +57,8 @@ float Lander::getDistanceBetween(float locA[2], float locB[2]) {
 
 int * Lander::getCompensatedAngles(int hpr[3], float alt, float currentLoc[2], float targetLoc[2]) {
 	static int compAngles[2];
+	setCommLat(currentLoc[0]);
+	setCommLon(currentLoc[1]);
 
 	int neededHeading = getNeededHeading(currentLoc, targetLoc);
 
@@ -96,13 +98,11 @@ int * Lander::getCompensatedAngles(int hpr[3], float alt, float currentLoc[2], f
 // Actual camera aiming
 
 void Lander::pointTo(float targetLoc[2]) {
-	//Lander::latLon currentLoc = gps.getCurrentLatLon();
-
-	float currentLoc[2] = {28.054506, -82.425972};
-	//Currently set to JP Hall as a placeholder until GPS enabled
+	float * currentLoc = gps.getCurrentLatLon();
 
 	int * orientation = dof.getCurrentOrientation();
 	float altitude = dof.getCurrentAltitude();
+	setCommAltitude(altitude);
 
 	if(orientation[0] != 0 && altitude > 3) {
 		int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);

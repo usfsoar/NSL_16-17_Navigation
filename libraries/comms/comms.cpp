@@ -5,11 +5,11 @@
 
 int reqVal, commAltitude, commDistance;
 float commLon, commLat;
-bool safeToStart = false, dofError, gpsError, gpsHasFix, shutdown;
+bool safeToStart = false, dofError, gpsError, gpsHasFix, shutdown, landerIsDeployed;
 
 const PROGMEM int ALTREQONE = 0, ALTREQTWO = 1, ERRORCODEREQ = 2, DISTREQONE = 3, DISTREQTWO = 4, INITREQ = 5, INITDOFREQ = 6, INITGPSREQ = 7, GPSFIXREQ = 8, SHUTDOWN = 9;
 const PROGMEM int LATREQONE = 10, LATREQTWO = 11, LATREQTHREE = 12, LATREQFOUR = 13;
-const PROGMEM int LONREQONE = 14, LONREQTWO = 15, LONREQTHREE = 16, LONREQFOUR = 17;
+const PROGMEM int LONREQONE = 14, LONREQTWO = 15, LONREQTHREE = 16, LONREQFOUR = 17, ISDEPLOYED = 18;
 
 int getFirstAltByte() {
 	return int(commAltitude / 100);
@@ -102,6 +102,11 @@ void sendData(){
 	  shutdown = true;
   }
   
+    if (reqVal == ISDEPLOYED) {
+	  Wire.write(true);
+	  landerIsDeployed = true;
+  }
+  
 }
 
 void setCommLat(int lat) {
@@ -134,6 +139,10 @@ void setGpsError(bool er) {
 
 bool needToShutdown(){
 	return shutdown;
+}
+
+bool isDeployed(){
+	return landerIsDeployed;
 }
 
 bool piInit() {
