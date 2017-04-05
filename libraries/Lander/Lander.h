@@ -1,8 +1,10 @@
 #include "Arduino.h"
+#include <comms.h>
 #include <Servo.h>
 #include <landerGPS.h>
 #include <landerDOF.h>
 #include <landerServos.h>
+
 
 class Lander {
 	public:
@@ -14,7 +16,7 @@ class Lander {
 
 		int * getCompensatedAngles(int hpr[3], float alt, float currentLoc[2], float targetLoc[2]);
 
-		void pointTo(float targetLoc[2]);
+		void pointTo(float targetLoc[2]), errorCheck();
 
 		bool init();
 		

@@ -20,7 +20,6 @@ int Lander::radToDeg(float rad) {
 }
 
 // Latitude and Longitude Operations:
-
 int Lander::getNeededHeading(float currLoc[2], float neededLoc[2]) {
 	float deltaLon = neededLoc[1] - currLoc[1];
 
@@ -31,8 +30,6 @@ int Lander::getNeededHeading(float currLoc[2], float neededLoc[2]) {
 
 	int angle = radToDeg(radAngle);
 
-	Serial.print(F("Needed heading: "));
-	Serial.println(angle);
 	return angle;
 }
 
@@ -52,8 +49,7 @@ float Lander::getDistanceBetween(float locA[2], float locB[2]) {
 	// Haversine Formula:
 	float dist = 2.0 * radius * asin(sqrt(dLoc[0] * dLoc[0] + cos(radLocA[0]) * cos(radLocB[0]) * dLoc[1] * dLoc[1]));
 
-	Serial.print(F("Distance calculated: "));
-	Serial.println(dist);
+	setCommDistance(dist);
 	return dist; // Meters
 }
 
@@ -72,9 +68,6 @@ int * Lander::getCompensatedAngles(int hpr[3], float alt, float currentLoc[2], f
 		panAngle += 360;
 	}
 
-	Serial.print(F("UnCompensated Pan Angle: ")); 
-	Serial.println(panAngle);
-
 	float pan = degToRad(panAngle), 
 		dist = getDistanceBetween(currentLoc, targetLoc), 
 		pitch = degToRad(hpr[1]), 
@@ -90,7 +83,7 @@ int * Lander::getCompensatedAngles(int hpr[3], float alt, float currentLoc[2], f
 	float panPrime = atan2(compVector[1],compVector[0]);
 	float distPrime = compVector[1]/sin(panPrime);
 	if (abs(distPrime - compVector[0]/cos(panPrime)) > 0.1) {
-		Serial.println(F("WARNING: Error with compensated angles function."));
+		Serial.println(F("WARNING: Error with compensated angles function.")); //TODO Does this error?
 	}
 	float tiltPrime = atan2(distPrime,(-compVector[2]));
 
@@ -111,15 +104,9 @@ void Lander::pointTo(float targetLoc[2]) {
 	int * orientation = dof.getCurrentOrientation();
 	float altitude = dof.getCurrentAltitude();
 
-
 	if(orientation[0] != 0 && altitude > 3) {
 		int * angles = getCompensatedAngles(orientation, altitude, currentLoc, targetLoc);
 		int panAngle = angles[0], tiltAngle = angles[1];
-
-		Serial.print(F("Compensated Pan Angle: ")); 
-		Serial.println(panAngle);
-		Serial.print(F("Compensated Tilt Angle: ")); 
-		Serial.println(tiltAngle);
 		
 		//servos can only go 180deg, not 360
 		if (panAngle > 0) { //looking to the left
@@ -129,26 +116,23 @@ void Lander::pointTo(float targetLoc[2]) {
 			panAngle = -panAngle;
 		}
 
-		Serial.print(F("Pan servo setting: ")); 
-		Serial.println(panAngle);
-		Serial.print(F("Tilt servo setting: ")); 
-		Serial.println(tiltAngle);
-
 		servos.setAngle(1, panAngle);
 		servos.setAngle(2, tiltAngle);
-	} else {
-		Serial.println(F("WARNING: Altitude or heading returned strange value (likely error). Retrying."));
-	}
+	} 
+}
+
+void Lander::errorCheck() {
+	setDofError(dof.hasError());
+	setGpsHasFix(gps.hasFix());
+	setGpsError(gps.hasError());	
 }
 
 // Initiation
 
 bool Lander::init() {
-	if (!dof.init() || !servos.init() || !gps.init()) {
-		Serial.println(F("Failed to initialize lander."));
-		return false;
-	} else {
-		Serial.println(F("Lander initialized successfully."));
-		return true;
-	}
+	dof.init();
+	gps.init();
+	servos.init();
+	
+	return true;
 }
