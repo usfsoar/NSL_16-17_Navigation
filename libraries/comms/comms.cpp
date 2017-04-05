@@ -109,19 +109,19 @@ void sendData(){
   
 }
 
-void setCommLat(int lat) {
+void setCommLat(float lat) {
 	commLat = lat;
 }
 
-void setCommLon(int lon) {
+void setCommLon(float lon) {
 	commLon = lon;
 }
 
-void setCommAltitude(float alt) {
+void setCommAltitude(int alt) {
 	commAltitude = alt;
 }
 
-void setCommDistance(float dist) {
+void setCommDistance(int dist) {
 	commDistance = dist;
 }
 
