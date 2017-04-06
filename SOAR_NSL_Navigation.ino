@@ -15,7 +15,7 @@ void setup() {
   while (!piInit()) //Wait for Pi to tell us to start
     delay(1000);
 
-  float* latLon = lander.gps.getCurrentLatLon(); // Assuming we are close to tarps?
+  float* latLon = lander.gps.getCurrentLatLon(); // UPDATE ON LAUNCH DAY.
   targetLoc[0] = latLon[0];
   targetLoc[1] = latLon[1];
 
@@ -34,7 +34,7 @@ void loop() {
   while (isDeployed()) {
     lander.pointTo(targetLoc);
     if (needToShutdown()) {
-      lander.servos.setAngle(1, 45);
+      lander.servos.goToIdle();
       while (true)
         delay(500);
     }

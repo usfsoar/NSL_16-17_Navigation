@@ -44,11 +44,14 @@ void landerServos::setPin(int servo, int pin) {
 	} 
 }
 
+void landerServos::goToIdle() {
+	setAngle(1, 45);
+	pwm.setPWM(tiltServoPin, 0, tiltBegin); // Outside normal range
+}
+
 bool landerServos::init() {
 	pwm.begin();
 	pwm.setPWMFreq(60);
-
-	setAngle(1, 45); //Initiral safe angle
-	pwm.setPWM(tiltServoPin, 0, tiltBegin);
+	goToIdle();
 	return true;
 }
