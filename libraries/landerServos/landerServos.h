@@ -4,7 +4,7 @@
 
 class landerServos {
 	public:
-		void setAngle(int servo, int angle), setPin(int servo, int pin);
+		void setAngle(int servo, int angle), setPin(int servo, int pin), goToIdle();
 		bool init();
 		int constrainPWM(int val, int limitA, int limitB);
 		
