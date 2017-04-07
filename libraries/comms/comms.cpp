@@ -4,49 +4,19 @@
 #include <avr/pgmspace.h>
 
 int reqVal, commAltitude, commDistance;
-float commLon, commLat;
+float commLon, commLat, commOZero, commOOne, commOTwo;
 bool safeToStart = false, dofError, gpsError, gpsHasFix, shutdown, landerIsDeployed;
 
-const PROGMEM int ALTREQONE = 0, ALTREQTWO = 1, ERRORCODEREQ = 2, DISTREQONE = 3, DISTREQTWO = 4, INITREQ = 5, INITDOFREQ = 6, INITGPSREQ = 7, GPSFIXREQ = 8, SHUTDOWN = 9;
-const PROGMEM int LATREQONE = 10, LATREQTWO = 11, LATREQTHREE = 12, LATREQFOUR = 13;
-const PROGMEM int LONREQONE = 14, LONREQTWO = 15, LONREQTHREE = 16, LONREQFOUR = 17, ISDEPLOYED = 18;
+const PROGMEM int ALTREQ = 0, ERRORCODEREQ = 1, DISTREQ = 2, INITREQ = 3, INITDOFREQ = 4, INITGPSREQ = 5, GPSFIXREQ = 6, SHUTDOWNREQ = 7;
+const PROGMEM int LATREQ = 8, LONREQ = 9, ISDEPLOYEDREQ = 10, ORIENTATIONSREQ = 11;
 
-int getFirstAltByte() {
-	return int(commAltitude / 100);
-}
-
-int getSecondAltByte() {
-	return commAltitude - (getFirstAltByte() * 100);
-}
-
-int getFirstDistByte() {
-	return int(commDistance / 100);
-}
-
-int getSecondDistByte() {
-	return commDistance - (getFirstDistByte() * 100);
-}
-
-int getLatByte(int whichByte) {
-	double lat = commLat;
-	int theByte;
-	for (int i = 0; i < whichByte; i++) {
-		theByte = lat;
-		lat -= theByte;
-		lat *= 100;
-	}
-	return theByte;
-}
-
-int getLonByte(int whichByte) {
-	double lon = commLon;
-	int theByte;
-	for (int i = 0; i < whichByte; i++) {
-		theByte = lon;
-		lon -= theByte;
-		lon *= 100;
-	}
-	return theByte;
+void sendFloat(float val) {
+  String str = String(val, 9); //Carry 9 digits
+  int strLen = str.length() + 1; 
+  char cArr[strLen];
+  str.toCharArray(cArr, strLen);
+  for (int i = 0; i < strLen; ++i)
+    Wire.write(int(cArr[i]));   
 }
 
 void receiveData(int byteCount){
@@ -55,58 +25,49 @@ void receiveData(int byteCount){
 }
 
 void sendData(){
-	Serial.println("Here");
-  if (reqVal == ALTREQONE) 
-	  Wire.write(getFirstAltByte());
-  if (reqVal == ALTREQTWO)
-	  Wire.write(getSecondAltByte());
+  if (reqVal == ALTREQ)
+	sendFloat(commAltitude);
   
-  if (reqVal == DISTREQONE) 
-	  Wire.write(getFirstDistByte());
-  if (reqVal == DISTREQTWO)
-	  Wire.write(getSecondDistByte());
+  if (reqVal == DISTREQ) 
+	sendFloat(commDistance);
   
-  if (reqVal == LATREQONE) 
-	  Wire.write(getLatByte(1));
-  if (reqVal == LATREQTWO)
-	  Wire.write(getLatByte(2));
-  if (reqVal == LATREQTHREE) 
-	   Wire.write(getLatByte(3));
-  if (reqVal == LATREQFOUR)
-	  Wire.write(getLatByte(4));
+  if (reqVal == LATREQ) 
+	sendFloat(commLat);
  
-   if (reqVal == LONREQONE) 
-	  Wire.write(getLonByte(1));
-  if (reqVal == LONREQTWO)
-	  Wire.write(getLonByte(2));
-  if (reqVal == LONREQTHREE) 
-	   Wire.write(getLonByte(3));
-  if (reqVal == LONREQFOUR)
-	  Wire.write(getLonByte(4));
+  if (reqVal == LONREQ) 
+	sendFloat(commLon);
  
   if (reqVal == INITDOFREQ)
-	  Wire.write(dofError);
-  if (reqVal == INITGPSREQ)
-	  Wire.write(gpsError);
+	Wire.write(dofError);
  
-   if (reqVal == GPSFIXREQ) 
-	  Wire.write(gpsHasFix);
+  if (reqVal == GPSFIXREQ) 
+	Wire.write(gpsHasFix);
   
   if (reqVal == INITREQ) {
-	  Wire.write(INITREQ);
-	  safeToStart = true;
+	Wire.write(true);
+	safeToStart = true;
   }
   
-    if (reqVal == SHUTDOWN) {
+  if (reqVal == SHUTDOWNREQ) {
 	  Wire.write(true);
 	  shutdown = true;
   }
   
-    if (reqVal == ISDEPLOYED) {
+  if (reqVal == ISDEPLOYEDREQ) {
 	  Wire.write(true);
 	  landerIsDeployed = true;
   }
   
+  if (reqVal == ORIENTATIONSREQ) {
+	  sendFloat(commOZero);
+	  sendFloat(commOOne);
+	  sendFloat(commOTwo);
+  }
+  
+}
+
+void setCommOrientation(float zero, float one, float two) {
+	commOZero = zero; commOOne = one; commOTwo = two;
 }
 
 void setCommLat(float lat) {
