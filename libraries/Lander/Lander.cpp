@@ -59,6 +59,7 @@ int * Lander::getCompensatedAngles(int hpr[3], float alt, float currentLoc[2], f
 	static int compAngles[2];
 	setCommLat(currentLoc[0]);
 	setCommLon(currentLoc[1]);
+	setCommOrientation(hpr[0], hpr[1], hpr[2]);
 
 	int neededHeading = getNeededHeading(currentLoc, targetLoc);
 
@@ -133,6 +134,5 @@ bool Lander::init() {
 	dof.init();
 	gps.init();
 	servos.init();
-	
 	return true;
 }
