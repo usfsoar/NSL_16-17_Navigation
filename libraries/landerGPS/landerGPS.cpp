@@ -35,7 +35,7 @@ float * landerGPS::getCurrentLatLon() {
 		timer = millis();
 	}
 
-	if (millis() - timer > 2000) 
+	if (millis() - timer > 2000)  {
 		timer = millis();
 		
 		if (GPS.fix) {
@@ -46,6 +46,7 @@ float * landerGPS::getCurrentLatLon() {
 			Serial.println(F("No GPS Fix"));
 			return nullLatLon;
 		}
+	}
 }
 
 bool landerGPS::init() {
