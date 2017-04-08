@@ -8,7 +8,7 @@ float commLon, commLat, commOZero, commOOne, commOTwo;
 bool safeToStart = false, dofError, gpsError, gpsHasFix, shutdown, landerIsDeployed;
 
 const PROGMEM int ALTREQ = 0, ERRORCODEREQ = 1, DISTREQ = 2, INITREQ = 3, INITDOFREQ = 4, INITGPSREQ = 5, GPSFIXREQ = 6, SHUTDOWNREQ = 7;
-const PROGMEM int LATREQ = 8, LONREQ = 9, ISDEPLOYEDREQ = 10, ORIENTATIONSREQ = 11;
+const PROGMEM int LATREQ = 8, LONREQ = 9, ISDEPLOYEDREQ = 10, ORIENTATIONSREQONE = 11, ORIENTATIONSREQTWO = 12, ORIENTATIONSREQTHREE = 13;
 
 void sendFloat(float val) {
   String str = String(val, 9); //Carry 9 digits
@@ -58,11 +58,13 @@ void sendData(){
 	  landerIsDeployed = true;
   }
   
-  if (reqVal == ORIENTATIONSREQ) {
+  if (reqVal == ORIENTATIONSREQONE)
 	  sendFloat(commOZero);
+  if (reqVal == ORIENTATIONSREQTWO)
 	  sendFloat(commOOne);
+  if (reqVal == ORIENTATIONSREQTHREE)
 	  sendFloat(commOTwo);
-  }
+ 
   
 }
 
